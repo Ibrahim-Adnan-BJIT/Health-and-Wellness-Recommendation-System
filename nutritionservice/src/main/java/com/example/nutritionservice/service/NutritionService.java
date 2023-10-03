@@ -1,8 +1,7 @@
 package com.example.nutritionservice.service;
 
-import com.example.nutritionservice.dto.NutritionDto;
-import com.example.nutritionservice.entity.Nutrition;
+import com.example.nutritionservice.dto.request.NutritionRequestDTO;
 
 public interface NutritionService {
-    public void addNutrition(NutritionDto nutritionDto);
+    public void addNutrition(NutritionRequestDTO nutritionDto);
 }

@@ -1,8 +1,8 @@
 package com.example.nutritionservice.service.impl;
 
 import com.example.nutritionservice.dto.request.FoodRequestDto;
-import com.example.nutritionservice.dto.RecipeDto;
-import com.example.nutritionservice.dto.RecipeResponseDto;
+import com.example.nutritionservice.dto.request.RecipeRequestDTO;
+import com.example.nutritionservice.dto.response.RecipeResponseDto;
 import com.example.nutritionservice.entity.Food;
 import com.example.nutritionservice.entity.Recipe;
 import com.example.nutritionservice.exception.CustomException;
@@ -22,7 +22,7 @@ public class RecipeServiceImpl implements RecipeService {
     private final FoodRepository foodRepository;
 
     @Override
-    public RecipeResponseDto addRecipe(RecipeDto recipeDto) {
+    public RecipeResponseDto addRecipe(RecipeRequestDTO recipeDto) {
         Food food = getFood(recipeDto.getFoodId());
         Recipe recipe = Recipe.builder().process(recipeDto.getProcess()).food(food).build();
         Recipe recipe1 = recipeRepository.save(recipe);

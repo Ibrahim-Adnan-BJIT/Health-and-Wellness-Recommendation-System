@@ -2,7 +2,7 @@ package com.example.nutritionservice.service.impl;
 
 import com.example.nutritionservice.entity.Nutrition;
 import com.example.nutritionservice.service.NutritionService;
-import com.example.nutritionservice.dto.NutritionDto;
+import com.example.nutritionservice.dto.request.NutritionRequestDTO;
 import com.example.nutritionservice.exception.CustomException;
 import com.example.nutritionservice.repository.NutritionRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class NutritionServiceImpl implements NutritionService {
     private final NutritionRepository nutritionRepository;
 
     @Override
-    public void addNutrition(NutritionDto nutritionDto) {
+    public void addNutrition(NutritionRequestDTO nutritionDto) {
         if (nutritionRepository.existsByName(nutritionDto.getName())) {
             throw new CustomException(new Date(), "already exists", HttpStatus.BAD_REQUEST);
         }

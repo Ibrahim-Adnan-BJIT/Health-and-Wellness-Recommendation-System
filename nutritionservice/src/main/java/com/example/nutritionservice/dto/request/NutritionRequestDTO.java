@@ -1,4 +1,4 @@
-package com.example.nutritionservice.dto;
+package com.example.nutritionservice.dto.request;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class NutritionDto {
+public class NutritionRequestDTO {
     @NotNull(message = "Nutrition name is required")
     private String name;
 
