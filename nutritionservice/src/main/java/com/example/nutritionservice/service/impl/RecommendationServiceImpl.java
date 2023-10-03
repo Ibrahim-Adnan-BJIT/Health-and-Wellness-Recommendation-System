@@ -209,4 +209,12 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .quantityOfCalories(foodNutrition.getQuantity())
                 .build();
     }
+
+    @Override
+    public boolean isRecommendationExist(long userID, long recommendationId) {
+        if (!recommendationRepository.existsByUserIdAndId(userID, recommendationId)) {
+            throw new CustomException(new Date(), "failed to fetch data", HttpStatus.NOT_FOUND);
+        }
+        return true;
+    }
 }

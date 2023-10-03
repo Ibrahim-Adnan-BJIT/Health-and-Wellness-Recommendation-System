@@ -17,7 +17,7 @@ import java.util.List;
 public class Recommendation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     private long userId;
 

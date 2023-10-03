@@ -5,6 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface RecommendationRepository extends JpaRepository<Recommendation, Integer> {
+public interface RecommendationRepository extends JpaRepository<Recommendation, Long> {
     Optional<Recommendation> findByUserId(long userId);
+
+    public boolean existsByUserIdAndId(long userId, Long recommendationId);
 }

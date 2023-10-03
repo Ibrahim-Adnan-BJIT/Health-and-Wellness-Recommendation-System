@@ -32,6 +32,12 @@ public class RecommendationController {
         return new ProxyResponse("recommendation successful");
     }
 
+    @GetMapping("/v2/check-recommendation/user/{userID}/recommendation/{recommendationId}")
+    public boolean isRecommendationExist(@PathVariable long userID,
+                                         @PathVariable long recommendationId) {
+        return recommendationService.isRecommendationExist(userID, recommendationId);
+    }
+
 
     //fetch user health detail in case recommendation missing
 
