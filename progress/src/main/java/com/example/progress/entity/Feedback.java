@@ -18,7 +18,7 @@ public class Feedback {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	private Integer recommendationId;
+	private long recommendationId;
 	private long userId;
 	private double rating;
 	private String review;
