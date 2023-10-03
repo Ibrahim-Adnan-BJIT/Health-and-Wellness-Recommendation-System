@@ -1,6 +1,5 @@
 package com.example.nutritionservice.controller;
 
-import com.example.nutritionservice.entity.Food;
 import com.example.nutritionservice.service.FoodService;
 import com.example.nutritionservice.dto.request.FoodRequestDto;
 

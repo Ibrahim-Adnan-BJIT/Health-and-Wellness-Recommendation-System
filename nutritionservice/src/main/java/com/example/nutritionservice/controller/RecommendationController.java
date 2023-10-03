@@ -4,6 +4,7 @@ import com.example.nutritionservice.dto.response.ProxyResponse;
 import com.example.nutritionservice.dto.response.RecommendationDto;
 import com.example.nutritionservice.external.HealthDetails;
 import com.example.nutritionservice.response.ResponseHandler;
+import com.example.nutritionservice.service.AuthenticationService;
 import com.example.nutritionservice.service.RecommendationService;
 import lombok.RequiredArgsConstructor;
 
@@ -18,9 +19,11 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class RecommendationController {
     private final RecommendationService recommendationService;
+    private final AuthenticationService authenticationService;
 
-    @GetMapping("/v1/diet-recommendation/user/{userId}")
-    public ResponseEntity<?> getRecommendation(@PathVariable long userId) {
+    @GetMapping("/v1/diet-recommendation")
+    public ResponseEntity<?> getRecommendation() {
+        long userId = authenticationService.getAuthenticatedUser();
         RecommendationDto recommendationDto = recommendationService.dietRecommendation(userId);
         return ResponseHandler.generateResponse(new Date(), "Dietary Recommendation",
                 HttpStatus.OK, recommendationDto);
