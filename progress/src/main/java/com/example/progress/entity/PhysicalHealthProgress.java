@@ -1,14 +1,13 @@
 package com.example.progress.entity;
 
 import com.example.progress.external.enums.*;
-import com.example.progress.external.enums.*;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -42,5 +41,5 @@ public class PhysicalHealthProgress {
     @Enumerated(EnumType.STRING)
     private SleepIssue sleepIssue;
 
-    private Date date;
+    private LocalDate date;
 }

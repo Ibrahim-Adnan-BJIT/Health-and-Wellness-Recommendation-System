@@ -39,7 +39,7 @@ public class MentalHealthServiceImpl implements MentalHealthService {
 
         mentalHealthProgress.setUserId(healthDetails.getUserId());
         mentalHealthProgress.setDepression(mentalHealth.isDepression());
-        mentalHealthProgress.setDate(new Date());
+        mentalHealthProgress.setDate(LocalDate.now());
         mentalHealthProgress.setAnxiety(mentalHealth.isAnxiety());
         mentalHealthProgress.setPanicDisorder(mentalHealth.isPanicDisorder());
         mentalHealthProgress.setBipolarDisorder(mentalHealth.isBipolarDisorder());
@@ -63,15 +63,13 @@ public class MentalHealthServiceImpl implements MentalHealthService {
     @Override
     public MentalHealthProgressResponseDTO analysisMentalHealth(long userId) {
         int days = 7;
-        Pageable pageable = PageRequest.of(0, days);
-
-        List<MentalHealthProgress> mentalHealthProgressList =
-                mentalHealthProgressRepository
-                        .findTop7ByUserIdOrderByDateDesc(userId, pageable).getContent();
-
+        
         LocalDate today = LocalDate.now();
-        LocalDate startDate = today.minusDays(days - 1);
-
+        LocalDate startDate = today.minusDays(days);
+        
+        List<MentalHealthProgress> mentalHealthProgressList = 
+        		mentalHealthProgressRepository.
+        		findLast7DaysByUserId(userId, startDate, today);
 
         MentalHealthProgressResponseDTO mentalHealthProgressResponseDTO =
                 new MentalHealthProgressResponseDTO();
@@ -79,12 +77,7 @@ public class MentalHealthServiceImpl implements MentalHealthService {
         MentalHealthTrack mentalHealthTrack = new MentalHealthTrack();
 
         for (MentalHealthProgress progress : mentalHealthProgressList) {
-            LocalDate progressDate = progress.getDate()
-                    .toInstant()
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate();
 
-            if (!progressDate.isBefore(startDate) && !progressDate.isAfter(today)) {
                 if (progress.isDepression()) {
                     mentalHealthTrack.depressionCount++;
                 }
@@ -106,7 +99,6 @@ public class MentalHealthServiceImpl implements MentalHealthService {
                 if (lifeSatisfaction == LifeSatisfaction.LOW) {
                     mentalHealthTrack.lowSatisfactionCount++;
                 }
-            }
         }
 
         StringBuilder messageBuilder = getStringBuilder(mentalHealthTrack);
@@ -123,12 +115,9 @@ public class MentalHealthServiceImpl implements MentalHealthService {
             messageBuilder.append("you have experienced ");
             if (mentalHealthTrack.depressionCount > 0 && mentalHealthTrack.anxietyCount > 0) {
                 messageBuilder.append("both depression and anxiety");
-            } else if (mentalHealthTrack.depressionCount > 0) {
-                messageBuilder.append("depression");
-            } else {
-                messageBuilder.append("anxiety");
             }
-            messageBuilder.append(". ");
+            String mentalState = (mentalHealthTrack.depressionCount > 0) ? "depression":"anxiety";
+            messageBuilder.append(mentalState + ". ");
         } else {
             messageBuilder.append("you have not experienced depression or anxiety. ");
         }

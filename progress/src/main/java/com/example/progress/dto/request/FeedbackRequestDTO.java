@@ -1,5 +1,6 @@
 package com.example.progress.dto.request;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FeedbackRequestDTO {
+	@NotNull(message = "recommendation id required")
     private long recommendationId;
+	
+	@NotNull(message = "rating required")
     private double rating;
     private String review;
 }

@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -39,7 +40,7 @@ public class PhysicalHealthServiceImpl implements PhysicalHealthService {
         physicalHealthProgress.setAlcoholConsumption(physicalHealth.getAlcoholConsumption());
         physicalHealthProgress.setCaffeineConsumption(physicalHealth.getCaffeineConsumption());
         physicalHealthProgress.setSleepIssue(physicalHealth.getSleepIssue());
-        physicalHealthProgress.setDate(new Date());
+        physicalHealthProgress.setDate(LocalDate.now());
 
         physicalHealthProgressRepository.save(physicalHealthProgress);
     }
@@ -47,9 +48,11 @@ public class PhysicalHealthServiceImpl implements PhysicalHealthService {
     @Override
     public PhysicalHealthProgressResponseDTO analysisPhysicalHealth(long userId) {
         int days = 7;
-        Pageable pageable = PageRequest.of(0, days);
 
-        List<PhysicalHealthProgress> progressList = physicalHealthProgressRepository.findTop7ByUserIdOrderByDateDesc(userId, pageable).getContent();
+        LocalDate today = LocalDate.now();
+        LocalDate startDate = today.minusDays(days - 1);
+        List<PhysicalHealthProgress> progressList = physicalHealthProgressRepository
+        		.findLast7DaysByUserId(userId, startDate, today);
 
         PhysicalHealthProgressResponseDTO responseDTO = calculateInsights(progressList);
 

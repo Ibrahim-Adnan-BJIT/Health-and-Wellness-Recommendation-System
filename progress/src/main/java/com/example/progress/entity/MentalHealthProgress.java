@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -37,5 +38,5 @@ public class MentalHealthProgress {
     @Enumerated(EnumType.STRING)
     private LifeSatisfaction lifeSatisfaction;
 
-    private Date date;
+    private LocalDate date;
 }

@@ -45,7 +45,7 @@ public class HealthProgressController {
                 mentalHealthService.analysisMentalHealth(userId);
 
         HealthProgressResponseDTO healthProgressResponseDTO =
-                generateHealthDTO(physicalHealthProgressResponseDTO, mentalHealthProgressResponseDTO);
+                generateHealthDTO(physicalHealthProgressResponseDTO, mentalHealthProgressResponseDTO, userId);
 
         return ResponseHandler.generateResponse(new Date(), "Recent Health Progress",
                 HttpStatus.OK, healthProgressResponseDTO);
@@ -53,10 +53,11 @@ public class HealthProgressController {
 
     private HealthProgressResponseDTO generateHealthDTO(
             PhysicalHealthProgressResponseDTO physicalHealthProgressResponseDTO,
-            MentalHealthProgressResponseDTO mentalHealthProgressResponseDTO) {
+            MentalHealthProgressResponseDTO mentalHealthProgressResponseDTO,
+            long userId) {
         return HealthProgressResponseDTO
                 .builder()
-                .userId(16)
+                .userId(userId)
                 .physicalHealthProgressResponseDTO(physicalHealthProgressResponseDTO)
                 .mentalHealthProgressResponseDTO(mentalHealthProgressResponseDTO).build();
     }
