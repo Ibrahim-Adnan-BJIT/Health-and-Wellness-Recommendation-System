@@ -3,6 +3,7 @@ package com.example.progress.controller;
 import com.example.progress.dto.response.HealthProgressResponseDTO;
 import com.example.progress.dto.response.MentalHealthProgressResponseDTO;
 import com.example.progress.dto.response.PhysicalHealthProgressResponseDTO;
+import com.example.progress.dto.response.ProxyResponse;
 import com.example.progress.external.HealthDetails;
 import com.example.progress.response.ResponseHandler;
 import com.example.progress.service.AuthenticationService;
@@ -28,15 +29,15 @@ public class HealthProgressController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/v2/health/track")
-    public String addHealthProgress(@RequestBody HealthDetails healthDetails) {
+    public ProxyResponse addHealthProgress(@RequestBody HealthDetails healthDetails) {
         physicalHealthService.addPhysicalHealthProgress(healthDetails);
         mentalHealthService.addMentalHealthProgress(healthDetails);
-        return "progress is tracked";
+        return new ProxyResponse("progress is tracked");
     }
 
     @GetMapping("/v1/health/insights")
     public ResponseEntity<?> analysisHealthProgress() {
-    	long userId = authenticationService.getAuthenticatedUser();
+        long userId = authenticationService.getAuthenticatedUser();
         PhysicalHealthProgressResponseDTO physicalHealthProgressResponseDTO =
                 physicalHealthService.analysisPhysicalHealth(userId);
 
