@@ -25,6 +25,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/actuator/health").permitAll()
                         //.requestMatchers(HttpMethod.GET, "/api/**").hasRole("USER")
                         .anyRequest().authenticated()
                 )

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public interface RecommendationFeign {
 
     @CircuitBreaker(name = "CircuitBreakerService", fallbackMethod = "fallGetHealthProxyInformation")
-    @GetMapping("/api/v1/user/health-proxy/{userId}")
+    @GetMapping("/api/v2/proxyUser/health-data/{userId}")
     public HealthDetails getHealthProxyInformation(@PathVariable("userId") long userId);
 
     default public HealthDetails fallGetHealthProxyInformation(@PathVariable long userID,
