@@ -3,13 +3,12 @@ package com.example.userservices.services.impl;
 import com.example.userservices.DTO.request.*;
 import com.example.userservices.exception.CustomeException;
 import com.example.userservices.feignclient.RecommendationsClient;
-import com.example.userservices.feignclient.handleException.FeignCustomException;
 import com.example.userservices.model.*;
-import com.example.userservices.model.Enum.*;
 import com.example.userservices.repository.HealthRepository;
 import com.example.userservices.repository.UserRepository;
 import com.example.userservices.services.IUserCommandService;
 import com.example.userservices.utils.Constants;
+import com.example.userservices.utils.EnumValidation;
 import com.example.userservices.webclient.RecommendationServiceClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -130,17 +129,18 @@ public class UserCommandService implements IUserCommandService {
 
     private void setHealthDetailsFields(HealthDetails healthDetails, UserRequestDTO userRequestDTO) {
         Map<String, Consumer<HealthDetails>> fieldSetters = Map.of(
-                "gender", gender -> healthDetails.setGender(parseGender(userRequestDTO.getHealthDetails().getGender())),
+                "gender", gender -> healthDetails.setGender(EnumValidation.parseGender(userRequestDTO.getHealthDetails().getGender())),
                 "bmi", bmi -> healthDetails.setBmi(calculateBmi(userRequestDTO.getHealthDetails())),
                 "bmr", bmr -> healthDetails.setBmr(calculateBmr(userRequestDTO.getHealthDetails())),
-                "bloodGroup", bloodGroup -> healthDetails.setBloodGroup(parseBloodGroup(userRequestDTO.getHealthDetails().getBloodGroup())),
-                "goalType", goalType -> healthDetails.setGoalType(parseGoalType(userRequestDTO.getHealthDetails().getGoalType())),
-                "activityLevel", activityLevel -> healthDetails.setActivityLevel(parseActivityLevel(userRequestDTO.getHealthDetails().getActivityLevel()))
+                "bloodGroup", bloodGroup -> healthDetails.setBloodGroup(EnumValidation.parseBloodGroup(userRequestDTO.getHealthDetails().getBloodGroup())),
+                "goalType", goalType -> healthDetails.setGoalType(EnumValidation.parseGoalType(userRequestDTO.getHealthDetails().getGoalType())),
+                "activityLevel", activityLevel -> healthDetails.setActivityLevel(EnumValidation.parseActivityLevel(userRequestDTO.getHealthDetails().getActivityLevel()))
         );
 
         fieldSetters.forEach((fieldName, setter) -> setter.accept(healthDetails));
     }
 
+    // Calculate BMR
     private Double calculateBmr(HealthDetailsDTO healthDetailsDto) {
         Double weight = healthDetailsDto.getWeight();
         Double height = healthDetailsDto.getHeight();
@@ -163,12 +163,12 @@ public class UserCommandService implements IUserCommandService {
     // Update Health Details and map to Entity
     private void setHealthDetailsFieldsForUpdate(HealthDetailsDTO healthDetailsDTO, HealthDetails healthDetails) {
         Map<String, Consumer<HealthDetails>> fieldSetters = Map.of(
-                "gender", gender -> healthDetails.setGender(parseGender(healthDetailsDTO.getGender())),
+                "gender", gender -> healthDetails.setGender(EnumValidation.parseGender(healthDetailsDTO.getGender())),
                 "bmi", bmi -> healthDetails.setBmi(calculateBmi(healthDetailsDTO)),
                 "bmr", bmr -> healthDetails.setBmr(calculateBmr(healthDetailsDTO)),
-                "bloodGroup", bloodGroup -> healthDetails.setBloodGroup(parseBloodGroup(healthDetailsDTO.getBloodGroup())),
-                "goalType", goalType -> healthDetails.setGoalType(parseGoalType(healthDetailsDTO.getGoalType())),
-                "activityLevel", activityLevel -> healthDetails.setActivityLevel(parseActivityLevel(healthDetailsDTO.getActivityLevel()))
+                "bloodGroup", bloodGroup -> healthDetails.setBloodGroup(EnumValidation.parseBloodGroup(healthDetailsDTO.getBloodGroup())),
+                "goalType", goalType -> healthDetails.setGoalType(EnumValidation.parseGoalType(healthDetailsDTO.getGoalType())),
+                "activityLevel", activityLevel -> healthDetails.setActivityLevel(EnumValidation.parseActivityLevel(healthDetailsDTO.getActivityLevel()))
         );
 
         fieldSetters.forEach((fieldName, setter) -> setter.accept(healthDetails));
@@ -185,6 +185,12 @@ public class UserCommandService implements IUserCommandService {
         return dailySchedule;
     }
 
+    // Map Mental Health DTO to Mental Health Entity
+    private MentalHealth createMentalHealth(MentalHealthDTO mentalHealthDTO) {
+        MentalHealth mentalHealth = new MentalHealth();
+        return mapDataToMentalHealth(mentalHealth, mentalHealthDTO);
+    }
+
     private MentalHealth mapDataToMentalHealth(MentalHealth mentalHealth, MentalHealthDTO mentalHealthDTO) {
         mentalHealth.setDepression(mentalHealthDTO.isDepression());
         mentalHealth.setAnxiety(mentalHealthDTO.isAnxiety());
@@ -192,142 +198,35 @@ public class UserCommandService implements IUserCommandService {
         mentalHealth.setBipolarDisorder(mentalHealthDTO.isBipolarDisorder());
         mentalHealth.setSchizophrenia(mentalHealthDTO.isSchizophrenia());
 
-        mentalHealth.setMode(parseMode(mentalHealthDTO.getMode()));
-        mentalHealth.setStressLevel(parseStressLevel(mentalHealthDTO.getStressLevel()));
-        mentalHealth.setLifeSatisfaction(parseLifeSatisfaction(mentalHealthDTO.getLifeSatisfaction()));
+        mentalHealth.setMode(EnumValidation.parseMode(mentalHealthDTO.getMode()));
+        mentalHealth.setStressLevel(EnumValidation.parseStressLevel(mentalHealthDTO.getStressLevel()));
+        mentalHealth.setLifeSatisfaction(EnumValidation.parseLifeSatisfaction(mentalHealthDTO.getLifeSatisfaction()));
 
         return mentalHealth;
     }
 
-    private PhysicalHealth mapDataToPhysicalHealth(PhysicalHealth physicalHealth, PhysicalHealthDTO physicalHealthDTO) {
-        physicalHealth.setSmoke(physicalHealthDTO.isSmoke());
-        physicalHealth.setDiabetesLevel(parseDiabetesLevel(physicalHealthDTO.getDiabetesLevel()));
-        physicalHealth.setBloodPressure(parseBloodPressure(physicalHealthDTO.getBloodPressure()));
-        physicalHealth.setMotivationLevel(parseMotivationLevel(physicalHealthDTO.getMotivationLevel()));
-        physicalHealth.setAlcoholConsumption(parseAlcoholConsumption(physicalHealthDTO.getAlcoholConsumption()));
-        physicalHealth.setCaffeineConsumption(parseCaffeineConsumption(physicalHealthDTO.getCaffeineConsumption()));
-        physicalHealth.setSleepIssue(parseSleepIssue(physicalHealthDTO.getSleepIssue()));
-        return physicalHealth;
-    }
-
-    private MentalHealth createMentalHealth(MentalHealthDTO mentalHealthDTO) {
-        MentalHealth mentalHealth = new MentalHealth();
-        return mapDataToMentalHealth(mentalHealth, mentalHealthDTO);
-    }
-
-    private Double calculateBmi(HealthDetailsDTO healthDetailsDto) {
-        Double weight = healthDetailsDto.getWeight();
-        Double height = healthDetailsDto.getHeight();
-        // BMI formula: weight (kg) / (height (m) * height (m))
-        return weight / (height * height);
-    }
-
-    private BloodGroup parseBloodGroup(String userBloodGroup) {
-        try {
-            return BloodGroup.valueOf(userBloodGroup.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid blood group. Supported blood groups are A_POSITIVE, A_NEGATIVE, B_POSITIVE, B_NEGATIVE, AB_POSITIVE, AB_NEGATIVE, O_POSITIVE, and O_NEGATIVE.");
-        }
-    }
-
-    private GoalType parseGoalType(String userGoalType) {
-        try {
-            return GoalType.valueOf(userGoalType.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid goal type. Supported goal types are LOSE_WEIGHT, BUILD_MUSCLE, IMPROVE_FITNESS, REDUCE_STRESS, and IMPROVE_SLEEP.");
-        }
-    }
-
-    private ActivityLevel parseActivityLevel(String userActivityLevel) {
-        try {
-            return ActivityLevel.valueOf(userActivityLevel.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid activity level. Supported activity levels are SEDENTARY, LIGHTLY_ACTIVE, MODERATELY_ACTIVE, and VERY_ACTIVE.");
-        }
-    }
-
-    private Mode parseMode(String modeValue) {
-        try {
-            return Mode.valueOf(modeValue.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid mode. Supported modes are HAPPY, SAD, CALM, MANIC.");
-        }
-    }
-
-    private StressLevel parseStressLevel(String stressLevelValue) {
-        try {
-            return StressLevel.valueOf(stressLevelValue.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid stress level. Supported stress levels are LOW, MODERATE, HIGH.");
-        }
-    }
-
-    private LifeSatisfaction parseLifeSatisfaction(String lifeSatisfactionValue) {
-        try {
-            return LifeSatisfaction.valueOf(lifeSatisfactionValue.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid life satisfaction level. Supported levels are LOW, MODERATE, HIGH.");
-        }
-    }
-
+    // Map Physical Health DTO to Physical Health Entity
     private PhysicalHealth createPhysicalHealth(PhysicalHealthDTO physicalHealthDTO) {
         PhysicalHealth physicalHealth = new PhysicalHealth();
         return mapDataToPhysicalHealth(physicalHealth, physicalHealthDTO);
     }
 
-    private DiabetesLevel parseDiabetesLevel(String diabetesLevelValue) {
-        try {
-            return DiabetesLevel.valueOf(diabetesLevelValue.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid diabetes level. Supported levels are  TYPE_1, TYPE_2, NONE.");
-        }
+    private PhysicalHealth mapDataToPhysicalHealth(PhysicalHealth physicalHealth, PhysicalHealthDTO physicalHealthDTO) {
+        physicalHealth.setSmoke(physicalHealthDTO.isSmoke());
+        physicalHealth.setDiabetesLevel(EnumValidation.parseDiabetesLevel(physicalHealthDTO.getDiabetesLevel()));
+        physicalHealth.setBloodPressure(EnumValidation.parseBloodPressure(physicalHealthDTO.getBloodPressure()));
+        physicalHealth.setMotivationLevel(EnumValidation.parseMotivationLevel(physicalHealthDTO.getMotivationLevel()));
+        physicalHealth.setAlcoholConsumption(EnumValidation.parseAlcoholConsumption(physicalHealthDTO.getAlcoholConsumption()));
+        physicalHealth.setCaffeineConsumption(EnumValidation.parseCaffeineConsumption(physicalHealthDTO.getCaffeineConsumption()));
+        physicalHealth.setSleepIssue(EnumValidation.parseSleepIssue(physicalHealthDTO.getSleepIssue()));
+        return physicalHealth;
     }
 
-    private Gender parseGender(String userGender) {
-        try {
-            return Gender.valueOf(userGender.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid gender. Supported genders are MALE and FEMALE.");
-        }
-    }
-
-    private BloodPressure parseBloodPressure(String bloodPressureValue) {
-        try {
-            return BloodPressure.valueOf(bloodPressureValue.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid blood pressure level. Supported levels are  HIGH, LOW, NORMAL.");
-        }
-    }
-
-    private MotivationLevel parseMotivationLevel(String motivationLevelValue) {
-        try {
-            return MotivationLevel.valueOf(motivationLevelValue.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid motivation level. Supported levels are LOW, MODERATE, HIGH.");
-        }
-    }
-
-    private AlcoholConsumption parseAlcoholConsumption(String alcoholConsumptionValue) {
-        try {
-            return AlcoholConsumption.valueOf(alcoholConsumptionValue.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid alcohol consumption level. Supported levels are NONE, OCCASIONAL, MODERATE, HEAVY.");
-        }
-    }
-
-    private CaffeineConsumption parseCaffeineConsumption(String caffeineConsumptionValue) {
-        try {
-            return CaffeineConsumption.valueOf(caffeineConsumptionValue.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid caffeine consumption level. Supported levels are NONE, LOW, MODERATE, HIGH.");
-        }
-    }
-
-    private SleepIssue parseSleepIssue(String sleepIssueValue) {
-        try {
-            return SleepIssue.valueOf(sleepIssueValue.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid sleep issue level. Supported levels are NONE, INSOMNIA, SNORING, SLEEP_APNEA.");
-        }
+    // Calculate BMI
+    private Double calculateBmi(HealthDetailsDTO healthDetailsDto) {
+        Double weight = healthDetailsDto.getWeight();
+        Double height = healthDetailsDto.getHeight();
+        // BMI formula: weight (kg) / (height (m) * height (m))
+        return weight / (height * height);
     }
 }
