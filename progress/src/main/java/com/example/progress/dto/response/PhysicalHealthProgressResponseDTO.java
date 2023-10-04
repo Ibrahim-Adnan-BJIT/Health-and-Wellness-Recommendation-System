@@ -14,5 +14,5 @@ public class PhysicalHealthProgressResponseDTO {
     private String bloodPressureMessage;
     private String diabetesLevelMessage;
     private String motivationMessage;
-
+    private String sleepMessage;
 }
