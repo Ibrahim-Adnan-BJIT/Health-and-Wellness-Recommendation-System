@@ -19,6 +19,7 @@ public class Constants {
     public static final String STATUS_KEY = "status";
     public static final String DATA_KEY = "data";
     public static final int SUCCESS_STATUS_CODE = 200;
+    public static final int MAX_RETRY_ATTEMPTS = 3;
 
     // Roles
     public static final String ROLE_USER = "USER";

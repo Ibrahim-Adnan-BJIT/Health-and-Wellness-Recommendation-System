@@ -1,4 +1,4 @@
-package com.example.userservices.feing.handleException;
+package com.example.userservices.feignclient.handleException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
