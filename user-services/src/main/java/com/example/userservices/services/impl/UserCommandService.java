@@ -1,18 +1,16 @@
 package com.example.userservices.services.impl;
 
 import com.example.userservices.DTO.request.*;
-import com.example.userservices.DTO.response.HealthDetailsDto;
-import com.example.userservices.DTO.response.ProxyResponse;
-import com.example.userservices.exception.AuthenticationException;
 import com.example.userservices.exception.CustomeException;
-import com.example.userservices.feing.RecommendationsClient;
-import com.example.userservices.feing.handleException.FeignCustomException;
+import com.example.userservices.feignclient.RecommendationsClient;
+import com.example.userservices.feignclient.handleException.FeignCustomException;
 import com.example.userservices.model.*;
 import com.example.userservices.model.Enum.*;
 import com.example.userservices.repository.HealthRepository;
 import com.example.userservices.repository.UserRepository;
 import com.example.userservices.services.IUserCommandService;
 import com.example.userservices.utils.Constants;
+import com.example.userservices.webclient.RecommendationServiceClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -26,13 +24,16 @@ public class UserCommandService implements IUserCommandService {
     private final UserRepository userRepository;
     private final HealthRepository healthRepository;
     private final RecommendationsClient recommendationsClient;
+    private final RecommendationServiceClient recommendationServiceClient;
 
-    public UserCommandService(UserRepository userRepository, HealthRepository healthRepository, RecommendationsClient recommendationsClient) {
+    public UserCommandService(UserRepository userRepository, HealthRepository healthRepository, RecommendationsClient recommendationsClient, RecommendationServiceClient recommendationServiceClient) {
         this.userRepository = userRepository;
         this.healthRepository = healthRepository;
         this.recommendationsClient = recommendationsClient;
+        this.recommendationServiceClient = recommendationServiceClient;
     }
 
+    // Create User Details and Health Details
     @Override
     public void createUserDetails(long userId, UserRequestDTO userRequestDTO) {
         // Check if the user already created profile or not
@@ -69,12 +70,8 @@ public class UserCommandService implements IUserCommandService {
         // Save Database
         userRepository.save(userProfile);
         healthRepository.save(healthDetails);
-
-        try {
-            recommendationsClient.importUserHealthData(healthDetails);
-        } catch (FeignCustomException ex) {
-            log.error("Failed to import");
-        }
+        // Send data to microservices
+        sendToRecommendationMicroservice(healthDetails);
     }
 
     @Override
@@ -88,9 +85,7 @@ public class UserCommandService implements IUserCommandService {
         healthDetails.setAge(healthDetailsDTO.getAge());
         healthDetails.setWeight(healthDetailsDTO.getWeight());
         healthDetails.setHeight(healthDetailsDTO.getHeight());
-
         setHealthDetailsFieldsForUpdate(healthDetailsDTO, healthDetails);
-
 
         // Convert map to model
         mapDataToPhysicalHealth(healthDetails.getPhysicalHealth(), healthDetailsDTO.getPhysicalHealthDTO());
@@ -99,14 +94,20 @@ public class UserCommandService implements IUserCommandService {
 
         // Save in Database
         healthRepository.save(healthDetails);
-
-        try {
-            recommendationsClient.importUserHealthData(healthDetails);
-        } catch (FeignCustomException ex) {
-            log.error("Failed to import");
-        }
+        // Send data to microservices
+        sendToRecommendationMicroservice(healthDetails);
     }
 
+    // Send data to Recommendation Microservices
+    private void sendToRecommendationMicroservice(HealthDetails healthDetails) {
+        recommendationServiceClient.importUserHealthData(healthDetails)
+                .subscribe(
+                        response -> log.info("Data received successfully by Recommendation Microservice"),
+                        ex -> log.error("Failed to import to Recommendation Microservice: " + ex.getMessage())
+                );
+    }
+
+    // Map DTO to entity in User Profile
     private UserProfile createAndSaveUserProfile(long userId, UserRequestDTO userRequestDTO) {
         UserProfile userProfile = new UserProfile();
         userProfile.setUserId(userId);
@@ -117,6 +118,7 @@ public class UserCommandService implements IUserCommandService {
         return userProfile;
     }
 
+    // Map DTO to entity in Health Details
     private HealthDetails createHealthDetails(long userId, UserRequestDTO userRequestDTO) {
         HealthDetails healthDetails = new HealthDetails();
         healthDetails.setUserId(userId);
@@ -137,14 +139,6 @@ public class UserCommandService implements IUserCommandService {
         );
 
         fieldSetters.forEach((fieldName, setter) -> setter.accept(healthDetails));
-    }
-
-    private Gender parseGender(String userGender) {
-        try {
-            return Gender.valueOf(userGender.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid gender. Supported genders are MALE and FEMALE.");
-        }
     }
 
     private Double calculateBmr(HealthDetailsDTO healthDetailsDto) {
@@ -180,6 +174,47 @@ public class UserCommandService implements IUserCommandService {
         fieldSetters.forEach((fieldName, setter) -> setter.accept(healthDetails));
     }
 
+    private DailySchedule createDailySchedule(DailyScheduleDTO dailyScheduleDTO) {
+        DailySchedule dailySchedule = new DailySchedule();
+        return mapDataToDailySchedule(dailySchedule, dailyScheduleDTO);
+    }
+
+    private DailySchedule mapDataToDailySchedule(DailySchedule dailySchedule, DailyScheduleDTO dailyScheduleDTO) {
+        dailySchedule.setWakeTime(dailyScheduleDTO.getWakeTime());
+        dailySchedule.setBedTime(dailyScheduleDTO.getBedTime());
+        return dailySchedule;
+    }
+
+    private MentalHealth mapDataToMentalHealth(MentalHealth mentalHealth, MentalHealthDTO mentalHealthDTO) {
+        mentalHealth.setDepression(mentalHealthDTO.isDepression());
+        mentalHealth.setAnxiety(mentalHealthDTO.isAnxiety());
+        mentalHealth.setPanicDisorder(mentalHealthDTO.isPanicDisorder());
+        mentalHealth.setBipolarDisorder(mentalHealthDTO.isBipolarDisorder());
+        mentalHealth.setSchizophrenia(mentalHealthDTO.isSchizophrenia());
+
+        mentalHealth.setMode(parseMode(mentalHealthDTO.getMode()));
+        mentalHealth.setStressLevel(parseStressLevel(mentalHealthDTO.getStressLevel()));
+        mentalHealth.setLifeSatisfaction(parseLifeSatisfaction(mentalHealthDTO.getLifeSatisfaction()));
+
+        return mentalHealth;
+    }
+
+    private PhysicalHealth mapDataToPhysicalHealth(PhysicalHealth physicalHealth, PhysicalHealthDTO physicalHealthDTO) {
+        physicalHealth.setSmoke(physicalHealthDTO.isSmoke());
+        physicalHealth.setDiabetesLevel(parseDiabetesLevel(physicalHealthDTO.getDiabetesLevel()));
+        physicalHealth.setBloodPressure(parseBloodPressure(physicalHealthDTO.getBloodPressure()));
+        physicalHealth.setMotivationLevel(parseMotivationLevel(physicalHealthDTO.getMotivationLevel()));
+        physicalHealth.setAlcoholConsumption(parseAlcoholConsumption(physicalHealthDTO.getAlcoholConsumption()));
+        physicalHealth.setCaffeineConsumption(parseCaffeineConsumption(physicalHealthDTO.getCaffeineConsumption()));
+        physicalHealth.setSleepIssue(parseSleepIssue(physicalHealthDTO.getSleepIssue()));
+        return physicalHealth;
+    }
+
+    private MentalHealth createMentalHealth(MentalHealthDTO mentalHealthDTO) {
+        MentalHealth mentalHealth = new MentalHealth();
+        return mapDataToMentalHealth(mentalHealth, mentalHealthDTO);
+    }
+
     private Double calculateBmi(HealthDetailsDTO healthDetailsDto) {
         Double weight = healthDetailsDto.getWeight();
         Double height = healthDetailsDto.getHeight();
@@ -211,25 +246,6 @@ public class UserCommandService implements IUserCommandService {
         }
     }
 
-    private MentalHealth createMentalHealth(MentalHealthDTO mentalHealthDTO) {
-        MentalHealth mentalHealth = new MentalHealth();
-        return mapDataToMentalHealth(mentalHealth, mentalHealthDTO);
-    }
-
-    private MentalHealth mapDataToMentalHealth(MentalHealth mentalHealth, MentalHealthDTO mentalHealthDTO) {
-        mentalHealth.setDepression(mentalHealthDTO.isDepression());
-        mentalHealth.setAnxiety(mentalHealthDTO.isAnxiety());
-        mentalHealth.setPanicDisorder(mentalHealthDTO.isPanicDisorder());
-        mentalHealth.setBipolarDisorder(mentalHealthDTO.isBipolarDisorder());
-        mentalHealth.setSchizophrenia(mentalHealthDTO.isSchizophrenia());
-
-        mentalHealth.setMode(parseMode(mentalHealthDTO.getMode()));
-        mentalHealth.setStressLevel(parseStressLevel(mentalHealthDTO.getStressLevel()));
-        mentalHealth.setLifeSatisfaction(parseLifeSatisfaction(mentalHealthDTO.getLifeSatisfaction()));
-
-        return mentalHealth;
-    }
-
     private Mode parseMode(String modeValue) {
         try {
             return Mode.valueOf(modeValue.toUpperCase());
@@ -259,22 +275,19 @@ public class UserCommandService implements IUserCommandService {
         return mapDataToPhysicalHealth(physicalHealth, physicalHealthDTO);
     }
 
-    private PhysicalHealth mapDataToPhysicalHealth(PhysicalHealth physicalHealth, PhysicalHealthDTO physicalHealthDTO) {
-        physicalHealth.setSmoke(physicalHealthDTO.isSmoke());
-        physicalHealth.setDiabetesLevel(parseDiabetesLevel(physicalHealthDTO.getDiabetesLevel()));
-        physicalHealth.setBloodPressure(parseBloodPressure(physicalHealthDTO.getBloodPressure()));
-        physicalHealth.setMotivationLevel(parseMotivationLevel(physicalHealthDTO.getMotivationLevel()));
-        physicalHealth.setAlcoholConsumption(parseAlcoholConsumption(physicalHealthDTO.getAlcoholConsumption()));
-        physicalHealth.setCaffeineConsumption(parseCaffeineConsumption(physicalHealthDTO.getCaffeineConsumption()));
-        physicalHealth.setSleepIssue(parseSleepIssue(physicalHealthDTO.getSleepIssue()));
-        return physicalHealth;
-    }
-
     private DiabetesLevel parseDiabetesLevel(String diabetesLevelValue) {
         try {
             return DiabetesLevel.valueOf(diabetesLevelValue.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid diabetes level. Supported levels are  TYPE_1, TYPE_2, NONE.");
+        }
+    }
+
+    private Gender parseGender(String userGender) {
+        try {
+            return Gender.valueOf(userGender.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid gender. Supported genders are MALE and FEMALE.");
         }
     }
 
@@ -316,16 +329,5 @@ public class UserCommandService implements IUserCommandService {
         } catch (IllegalArgumentException e) {
             throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid sleep issue level. Supported levels are NONE, INSOMNIA, SNORING, SLEEP_APNEA.");
         }
-    }
-
-    private DailySchedule createDailySchedule(DailyScheduleDTO dailyScheduleDTO) {
-        DailySchedule dailySchedule = new DailySchedule();
-        return mapDataToDailySchedule(dailySchedule, dailyScheduleDTO);
-    }
-
-    private DailySchedule mapDataToDailySchedule(DailySchedule dailySchedule, DailyScheduleDTO dailyScheduleDTO) {
-        dailySchedule.setWakeTime(dailyScheduleDTO.getWakeTime());
-        dailySchedule.setBedTime(dailyScheduleDTO.getBedTime());
-        return dailySchedule;
     }
 }

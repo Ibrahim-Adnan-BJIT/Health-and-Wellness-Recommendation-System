@@ -1,14 +1,13 @@
-package com.example.userservices.feing;
+package com.example.userservices.feignclient;
 
 import com.example.userservices.DTO.request.LogInRequestDTO;
 import com.example.userservices.DTO.request.RegisterRequestDTO;
 import com.example.userservices.DTO.response.AuthenticationResponseDTO;
 import com.example.userservices.DTO.response.LogInResponseDTO;
 import com.example.userservices.DTO.response.UserInformation;
-import com.example.userservices.feing.handleException.CustomFeignErrorDecoder;
+import com.example.userservices.feignclient.handleException.CustomFeignErrorDecoder;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
