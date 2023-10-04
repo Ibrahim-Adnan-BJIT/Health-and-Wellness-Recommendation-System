@@ -1,8 +1,6 @@
 package com.example.recommendationservice.DTO.request;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -22,10 +20,12 @@ public class ExerciseRequestDTO {
     @NotEmpty(message = "GoalType should not be null or empty")
     private String goalType;
 
-    @PositiveOrZero(message = "MinAgeRequirement should not be a negative number or null or empty")
+
+    @Min(value = 2, message = "Minimum AgeRequirement should be at least 2 and Can't be empty")
     private long minAgeRequirement;
 
-    @PositiveOrZero(message = "MaxAgeRequirement should not be a negative number or null or empty")
+    @Min(value = 3, message = "Maximum AgeRequirement should be at least 3 and Can't be empty")
+    @Max(value = 120, message = "Maximum AgeRequirement should less than 120 and Can't be empty")
     private long maxAgeRequirement;
 
     @NotEmpty(message = "DifficultyLevel should not be null or empty")
@@ -34,7 +34,7 @@ public class ExerciseRequestDTO {
     @NotEmpty(message = "EquipmentRequired should not be null or empty")
     private String equipmentRequired;
 
-    @Min(value = 10, message = "Duration should be at least 10")
+    @Min(value = 10, message = "Duration should be at least 10 and Can't be empty")
     private long duration;
 
     @NotEmpty(message = "VideoTutorialLink should not be null or empty")

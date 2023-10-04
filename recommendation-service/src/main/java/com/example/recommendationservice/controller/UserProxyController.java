@@ -19,12 +19,6 @@ public class UserProxyController {
         this.healthDetailsService = healthDetailsService;
     }
 
-//    @PostMapping("/health-data")
-//    public ProxyResponse importUserHealthData(@RequestBody HealthDetails healthDetails){
-//        healthDetailsService.importHealthDetails(healthDetails);
-//        return new ProxyResponse("Data received successfully");
-//    }
-
 
     @PostMapping("/health-data")
     public Mono<ProxyResponse> importUserHealthData(@RequestBody HealthDetails healthDetails) {
