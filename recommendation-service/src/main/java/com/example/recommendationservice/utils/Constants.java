@@ -1,4 +1,4 @@
-package com.example.userservices.utils;
+package com.example.recommendationservice.utils;
 
 public class Constants {
     public static final double MALE_BMR_CONSTANT = 88.362;
@@ -19,7 +19,10 @@ public class Constants {
     public static final String STATUS_KEY = "status";
     public static final String DATA_KEY = "data";
     public static final int SUCCESS_STATUS_CODE = 200;
-    public static final int MAX_RETRY_ATTEMPTS = 3;
+
+    public static final double LOWER_NORMAL_BMI  = 18.5;
+    public static final double UPPER_NORMAL_BMI  = 24.9;
+    public static final double MARGIN  = 0.5;
 
     // Roles
     public static final String ROLE_USER = "USER";

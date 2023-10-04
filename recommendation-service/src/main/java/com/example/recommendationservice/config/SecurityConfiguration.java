@@ -1,23 +1,21 @@
-package com.example.userservices.config;
+package com.example.recommendationservice.config;
 
-
-import com.example.userservices.security.JwtAuthenticationFilter;
-import com.example.userservices.utils.Constants;
+import com.example.recommendationservice.security.JwtAuthenticationFilter;
+import com.example.recommendationservice.utils.Constants;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.http.HttpMethod;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfiguration {
-
     private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
@@ -25,9 +23,9 @@ public class SecurityConfiguration {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v2/proxyUser/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/user/**").hasRole(Constants.ROLE_USER)
+                        .requestMatchers("/api/v2/user/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "api/v1/recommendations/**").hasRole(Constants.ROLE_USER)
+                        .requestMatchers( "/api/v1/exercise/**").hasRole(Constants.ROLE_USER)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
