@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(CustomException.class)
 	public ResponseEntity<?> handleResourceNotFoundException(CustomException ex, WebRequest webRequest) {
 
-		return ResponseHandler.generateResponse(ex.getTimestamp(), ex.getMessage(), ex.getDetails(), ex.getStatus());
+		return ResponseHandler.generateResponse(ex.getTimestamp(), ex.getMessage(), ex.getStatus());
 	}
 	
 	@ExceptionHandler(HttpMessageNotReadableException.class)

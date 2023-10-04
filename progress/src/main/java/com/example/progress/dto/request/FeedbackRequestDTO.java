@@ -11,9 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FeedbackRequestDTO {
-	@NotNull(message = "recommendation id required")
-    private long recommendationId;
-	
 	@NotNull(message = "rating required")
     private double rating;
     private String review;

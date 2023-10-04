@@ -35,7 +35,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
 			HttpStatus httpStatus = HttpStatus.valueOf(response.status());
 
-			return new CustomException(timestamp, errorMessage, details, httpStatus);
+			return new CustomException(timestamp, errorMessage, httpStatus);
 		} catch (IOException e) {
 			return errorDecoder.decode(methodKey, response);
 		}

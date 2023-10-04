@@ -1,17 +1,21 @@
 package com.example.progress.feign;
 
+import com.example.progress.external.HealthDetails;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(name = "Recommendation-Service", configuration = FeignErrorDecoder.class)
+@FeignClient(name = "USER-SERVICE", configuration = FeignErrorDecoder.class)
 public interface RecommendationFeign {
 
-    @CircuitBreaker(name = "CircuitBreakerService", fallbackMethod = "fallIsRecommendationExist")
-    @GetMapping("api/v2/check-recommendation/user/{userID}/recommendation/{recommendationId}")
-    public boolean isRecommendationExist(@PathVariable long userID,
-                                         @PathVariable long recommendationId);
+    @CircuitBreaker(name = "CircuitBreakerService", fallbackMethod = "fallGetHealthProxyInformation")
+    @GetMapping("/api/v1/user/health-proxy/{userId}")
+    public HealthDetails getHealthProxyInformation(@PathVariable("userId") long userId);
 
+    default public HealthDetails fallGetHealthProxyInformation(@PathVariable long userID,
+                                                          Throwable throwable) {
+        return new HealthDetails();
+    }
 
 }

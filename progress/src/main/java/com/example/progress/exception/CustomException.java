@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 public class CustomException extends RuntimeException {
 	private Date timestamp;
 	private String message;
-	private String details;
 	private HttpStatus status;
 
 }

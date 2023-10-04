@@ -14,12 +14,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Feedback {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer id;
-	private long recommendationId;
-	private long userId;
-	private double rating;
-	private String review;
+public class MentalHealthFeedback {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+    private long userId;
+    private double rating;
+    private String review;
 }

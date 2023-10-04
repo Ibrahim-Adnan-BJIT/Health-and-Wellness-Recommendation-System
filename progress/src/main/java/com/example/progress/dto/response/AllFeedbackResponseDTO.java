@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class FeedBackDTO {
+public class AllFeedbackResponseDTO {
     private long userId;
     private double rating;
     private String review;

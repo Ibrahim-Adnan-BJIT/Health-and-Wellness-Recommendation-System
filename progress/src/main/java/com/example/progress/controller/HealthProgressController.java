@@ -22,22 +22,15 @@ import java.util.Date;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/v1/health")
 public class HealthProgressController {
     private final PhysicalHealthService physicalHealthService;
     private final MentalHealthService mentalHealthService;
     private final AuthenticationService authenticationService;
 
-    @PostMapping("/v2/health/track")
-    public ProxyResponse addHealthProgress(@RequestBody HealthDetails healthDetails) {
-        physicalHealthService.addPhysicalHealthProgress(healthDetails);
-        mentalHealthService.addMentalHealthProgress(healthDetails);
-        return new ProxyResponse("progress is tracked");
-    }
-
-    @GetMapping("/v1/health/insights")
+    @GetMapping("/insights")
     public ResponseEntity<?> analysisHealthProgress() {
-        long userId = 16;//authenticationService.getAuthenticatedUser();
+        long userId = authenticationService.getAuthenticatedUser();
         PhysicalHealthProgressResponseDTO physicalHealthProgressResponseDTO =
                 physicalHealthService.analysisPhysicalHealth(userId);
 
