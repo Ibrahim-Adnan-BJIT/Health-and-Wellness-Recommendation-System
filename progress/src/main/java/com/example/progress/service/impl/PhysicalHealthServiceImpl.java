@@ -6,6 +6,7 @@ import com.example.progress.external.PhysicalHealth;
 import com.example.progress.external.enums.BloodPressure;
 import com.example.progress.external.enums.DiabetesLevel;
 import com.example.progress.external.enums.MotivationLevel;
+import com.example.progress.external.enums.SleepIssue;
 import com.example.progress.repository.PhysicalHealthProgressRepository;
 import com.example.progress.service.PhysicalHealthService;
 import com.example.progress.external.HealthDetails;
@@ -16,7 +17,9 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -52,104 +55,83 @@ public class PhysicalHealthServiceImpl implements PhysicalHealthService {
         LocalDate today = LocalDate.now();
         LocalDate startDate = today.minusDays(days - 1);
         List<PhysicalHealthProgress> progressList = physicalHealthProgressRepository
-        		.findLast7DaysByUserId(userId, startDate, today);
+                .findLast7DaysByUserId(userId, startDate, today);
 
-        PhysicalHealthProgressResponseDTO responseDTO = calculateInsights(progressList);
-
-        return responseDTO;
+        return calculateInsights(progressList);
     }
 
     private PhysicalHealthProgressResponseDTO calculateInsights(List<PhysicalHealthProgress> progressList) {
         PhysicalHealthProgressResponseDTO responseDTO = new PhysicalHealthProgressResponseDTO();
 
         int totalRecords = progressList.size();
-        String bloodPressureMessage = calculateBloodPressureMessage(progressList);
-        String diabetesLevelMessage = calculateDiabetesMessage(progressList);
-        String motivationMessage = generateMotivationMessage(progressList);
 
         responseDTO.setTotalRecords("Total no of records " + Integer.toString(totalRecords));
-        responseDTO.setBloodPressureMessage(bloodPressureMessage);
-        responseDTO.setDiabetesLevelMessage(diabetesLevelMessage);
-        responseDTO.setMotivationMessage(motivationMessage);
+        responseDTO.setBloodPressureMessage(analysisBloodPressure(progressList));
+        responseDTO.setDiabetesLevelMessage(analysisDiabetes(progressList));
+        responseDTO.setMotivationMessage(generateMotivationMessage(progressList));
+        responseDTO.setSleepMessage(analysisSleepIssue(progressList));
 
         return responseDTO;
     }
 
-    private String calculateBloodPressureMessage(List<PhysicalHealthProgress> progressList) {
-        int highRate = 0;
-        int lowRate = 0;
+    private String analysisBloodPressure(List<PhysicalHealthProgress> progressList) {
+        Map<BloodPressure, Integer> bloodPressureCounts = new EnumMap<>(BloodPressure.class);
 
         for (PhysicalHealthProgress progress : progressList) {
-            if (progress.getBloodPressure() == BloodPressure.HIGH) {
-                highRate++;
-            } else if (progress.getBloodPressure() == BloodPressure.LOW) {
-                lowRate++;
+            BloodPressure bloodPressure = progress.getBloodPressure();
+            bloodPressureCounts.put(bloodPressure, bloodPressureCounts.getOrDefault(bloodPressure, 0) + 1);
+        }
+
+        return generateBloodPressureMessage(bloodPressureCounts, progressList.size());
+    }
+
+    private String generateBloodPressureMessage(Map<BloodPressure, Integer> bloodPressureCounts, int noOfRecords) {
+        StringBuilder message = new StringBuilder("Blood Pressure Analysis: ");
+
+        for (BloodPressure pressure : BloodPressure.values()) {
+            if (bloodPressureCounts.containsKey(pressure)) {
+                int count = bloodPressureCounts.get(pressure);
+                double percentage = (double) count / noOfRecords * 100.0;
+                message.append(pressure.name()).append(" detected ")
+                        .append(String.format("%.4f", percentage))
+                        .append(" percentage in total records. ");
             }
         }
 
-        return generateBloodPressureMessage(highRate, lowRate, progressList.size());
-    }
-
-    private String generateBloodPressureMessage(int highRate, int lowRate, int noOfRecoreds) {
-        StringBuilder message = new StringBuilder("Blood Pressure Analysis: ");
-
-
-        if (highRate > 0) {
-            double highBloodPressurePercentage = (double) (highRate * 100.0)/ noOfRecoreds ;
-            String formattedPercentage = String.format("%.4f", highBloodPressurePercentage);
-            
-            message.append("High Blood Pressure detected. Percentage " 
-            + formattedPercentage + " in total records. ");
-        }
-
-        if (lowRate > 0) {
-            double lowBloodPressurePercentage = (double) (lowRate * 100.0) / noOfRecoreds;
-            
-            String formattedPercentage = String.format("%.4f", lowBloodPressurePercentage);
-            message.append("Low Blood Pressure detected. Percentage " 
-            + formattedPercentage + " in total records. ");
-        }
-
-        if (highRate == 0 && lowRate == 0) {
+        boolean noIssuesDetected = bloodPressureCounts.isEmpty();
+        if (noIssuesDetected) {
             message.append("No significant blood pressure issues detected.");
         }
 
         return message.toString();
     }
 
-    private String calculateDiabetesMessage(List<PhysicalHealthProgress> progressList) {
-        int type1Count = 0;
-        int type2Count = 0;
+    private String analysisDiabetes(List<PhysicalHealthProgress> progressList) {
+        Map<DiabetesLevel, Integer> diabetesCounts = new EnumMap<>(DiabetesLevel.class);
 
         for (PhysicalHealthProgress progress : progressList) {
-            if (progress.getDiabetesLevel() == DiabetesLevel.TYPE_1) {
-                type1Count++;
-            } else if (progress.getDiabetesLevel() == DiabetesLevel.TYPE_2) {
-                type2Count++;
+            DiabetesLevel diabetesLevel = progress.getDiabetesLevel();
+            diabetesCounts.put(diabetesLevel, diabetesCounts.getOrDefault(diabetesLevel, 0) + 1);
+        }
+
+        return generateDiabetesMessage(diabetesCounts, progressList.size());
+    }
+
+    private String generateDiabetesMessage(Map<DiabetesLevel, Integer> diabetesCounts, int noOfRecords) {
+        StringBuilder message = new StringBuilder("Diabetes Analysis: ");
+
+        for (DiabetesLevel level : DiabetesLevel.values()) {
+            if (diabetesCounts.containsKey(level)) {
+                int count = diabetesCounts.get(level);
+                double percentage = (double) count / noOfRecords * 100.0;
+                message.append(level.name()).append(" detected. Percentage ")
+                        .append(String.format("%.4f", percentage))
+                        .append(" in total records. ");
             }
         }
 
-        return generateDiabetesMessage(type1Count, type2Count, progressList.size());
-    }
-
-    private String generateDiabetesMessage(int type1Count, int type2Count, int noOfRecords) {
-        StringBuilder message = new StringBuilder("Diabetes Analysis: ");
-
-        if (type1Count > 0) {
-            double type1Percentage = (double) type1Count / noOfRecords * 100.0;
-            message.append("TYPE 1 Diabetes detected. Percentage ")
-                    .append(type1Percentage)
-                    .append(" in total records. ");
-        }
-
-        if (type2Count > 0) {
-            double type2Percentage = (double) type2Count / noOfRecords * 100.0;
-            message.append("TYPE 2 Diabetes detected. Percentage ")
-                    .append(type2Percentage)
-                    .append(" in total records.");
-        }
-
-        if (type1Count == 0 && type2Count == 0) {
+        boolean noIssuesDetected = diabetesCounts.isEmpty();
+        if (noIssuesDetected) {
             message.append("No significant diabetes issues detected.");
         }
 
@@ -163,5 +145,36 @@ public class PhysicalHealthServiceImpl implements PhysicalHealthService {
             return "Motivation Analysis: High motivation levels detected more than 50% in total records.";
         }
         return "Motivation Analysis: No significant high motivation levels detected.";
+    }
+
+    private String analysisSleepIssue(List<PhysicalHealthProgress> progressList) {
+        Map<SleepIssue, Integer> sleepIssueCounts = new EnumMap<>(SleepIssue.class);
+
+        for (PhysicalHealthProgress progress : progressList) {
+            SleepIssue sleepIssue = progress.getSleepIssue();
+            sleepIssueCounts.put(sleepIssue, sleepIssueCounts.getOrDefault(sleepIssue, 0) + 1);
+        }
+
+        return generateSleepIssueMessage(sleepIssueCounts, progressList.size());
+    }
+
+    private String generateSleepIssueMessage(Map<SleepIssue, Integer> sleepIssueCounts, int noOfRecords) {
+        StringBuilder message = new StringBuilder("Sleep Issue Analysis: ");
+
+        for (SleepIssue sleepIssue : SleepIssue.values()) {
+            if (sleepIssueCounts.containsKey(sleepIssue)) {
+                int count = sleepIssueCounts.get(sleepIssue);
+                double percentage = (double) count / noOfRecords * 100.0;
+                message.append(sleepIssue.name()).append(" detected. Percentage ")
+                        .append(percentage).append(" in total records. ");
+            }
+        }
+
+        boolean noIssuesDetected = sleepIssueCounts.isEmpty();
+        if (noIssuesDetected) {
+            message.append("No significant sleep issues detected.");
+        }
+
+        return message.toString();
     }
 }

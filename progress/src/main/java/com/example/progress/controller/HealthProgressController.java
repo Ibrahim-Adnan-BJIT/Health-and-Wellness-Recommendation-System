@@ -37,7 +37,7 @@ public class HealthProgressController {
 
     @GetMapping("/v1/health/insights")
     public ResponseEntity<?> analysisHealthProgress() {
-        long userId = authenticationService.getAuthenticatedUser();
+        long userId = 16;//authenticationService.getAuthenticatedUser();
         PhysicalHealthProgressResponseDTO physicalHealthProgressResponseDTO =
                 physicalHealthService.analysisPhysicalHealth(userId);
 
@@ -59,6 +59,7 @@ public class HealthProgressController {
                 .builder()
                 .userId(userId)
                 .physicalHealthProgressResponseDTO(physicalHealthProgressResponseDTO)
-                .mentalHealthProgressResponseDTO(mentalHealthProgressResponseDTO).build();
+                .mentalHealthProgressResponseDTO(mentalHealthProgressResponseDTO)
+                .build();
     }
 }
