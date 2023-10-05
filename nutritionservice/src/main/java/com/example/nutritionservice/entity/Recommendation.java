@@ -1,5 +1,7 @@
 package com.example.nutritionservice.entity;
 
+import com.example.nutritionservice.external.enums.BloodPressure;
+import com.example.nutritionservice.external.enums.GoalType;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,13 +23,10 @@ public class Recommendation {
 
     private long userId;
 
-    @ManyToMany
-    @JoinTable(
-            name = "recommendation_food",
-            joinColumns = @JoinColumn(name = "recommendation_id"),
-            inverseJoinColumns = @JoinColumn(name = "food_id")
-    )
-    private List<Food> foods;
+    private double newCalorieIntake;
+
+    @Enumerated(EnumType.STRING)
+    private BloodPressure bloodPressure;
 
     @Column(columnDefinition = "TEXT")
     private String suggestion;

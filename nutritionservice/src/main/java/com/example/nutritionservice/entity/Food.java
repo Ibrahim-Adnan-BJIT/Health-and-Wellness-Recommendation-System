@@ -29,7 +29,4 @@ public class Food {
 
     @OneToMany(mappedBy = "food", orphanRemoval = true)
     private List<Recipe> recipeSet = new ArrayList<>();
-
-    @ManyToMany(mappedBy = "foods")
-    private List<Recommendation> recommendations;
 }

@@ -43,26 +43,21 @@ public class RecommendationServiceImpl implements RecommendationService {
 
         double newCalorieIntake = adjustCalorieIntake(healthDetails.getGoalType(), calorieIntake);
 
-        List<Food> foods = foodRepository.findFoodsWithTotalCaloriesLessOrEqualThanCalorieIntake(newCalorieIntake);
-
-        if (!bloodPressureLevel.equals("NORMAL")) {
-            foods = filterFoodsForBloodPressure(foods, bloodPressureLevel);
-        }
-
-        generateRecommendation(healthDetails, foods, newCalorieIntake);
+        generateRecommendation(healthDetails, newCalorieIntake);
 
     }
 
-    private void generateRecommendation(HealthDetails healthDetails, List<Food> foods, double newCalorieIntake) {
+    private void generateRecommendation(HealthDetails healthDetails, double newCalorieIntake) {
         Recommendation recommendation = recommendationRepository
                 .findByUserId(healthDetails.getUserId())
                 .orElse(new Recommendation());
 
-        String suggestion = generateRecommendationMessage(healthDetails, foods, newCalorieIntake);
+        String suggestion = generateRecommendationMessage(healthDetails, newCalorieIntake);
 
-        recommendation.setFoods(foods);
         recommendation.setUserId(healthDetails.getUserId());
         recommendation.setSuggestion(suggestion);
+        recommendation.setNewCalorieIntake(newCalorieIntake);
+        recommendation.setBloodPressure(healthDetails.getPhysicalHealth().getBloodPressure());
         recommendationRepository.save(recommendation);
     }
 
@@ -125,7 +120,7 @@ public class RecommendationServiceImpl implements RecommendationService {
     }
 
 
-    private String generateRecommendationMessage(HealthDetails healthDetails, List<Food> foods, double newCalorieIntake) {
+    private String generateRecommendationMessage(HealthDetails healthDetails, double newCalorieIntake) {
 
         StringBuilder message = new StringBuilder();
 
@@ -158,27 +153,30 @@ public class RecommendationServiceImpl implements RecommendationService {
             message.append("Your blood pressure is normal. Continue " +
                     "to maintain a healthy lifestyle with a balanced diet.");
         }
-
-        if (foods.isEmpty()) {
-            message.append("No specific food recommendations available.");
-        } else {
-            message.append("Here are some of the recommended foods for your diet:");
-//            for (Food food : foods) {
-//                message.append("- " + food.getName());
-//            }
-        }
-
         return message.toString();
     }
 
     @Override
     public RecommendationDto dietRecommendation(long userId) {
-        //repace exception with get call from user service
         Recommendation recommendation = recommendationRepository.findByUserId(userId)
                 .orElseThrow(() -> new CustomException(new Date(), "no information available", HttpStatus.NOT_FOUND));
 
-        List<FoodResponseDTO> foodResponseDTOS = recommendation
-                .getFoods()
+        double newCalorieIntake = recommendation.getNewCalorieIntake();
+        List<Food> foods = foodRepository.findFoodsWithTotalCaloriesLessOrEqualThanCalorieIntake(newCalorieIntake);
+
+        String bloodPressureLevel = recommendation.getBloodPressure().toString();
+
+        if (!bloodPressureLevel.equalsIgnoreCase("NORMAL")) {
+            foods = filterFoodsForBloodPressure(foods, bloodPressureLevel);
+        }
+
+        if (foods.isEmpty()) {
+            recommendation.setSuggestion(recommendation.getSuggestion() + "Here are some recommended food.");
+        } else {
+            recommendation.setSuggestion(recommendation.getSuggestion() + "No specific food recommendations available.");
+        }
+
+        List<FoodResponseDTO> foodResponseDTOS = foods
                 .stream()
                 .map(this::mapToFoodDTO)
                 .toList();
