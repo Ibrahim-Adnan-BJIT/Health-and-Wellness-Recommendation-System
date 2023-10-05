@@ -18,4 +18,7 @@ public interface RecommendationFeign {
         return new HealthDetails();
     }
 
+    @GetMapping("/api/v2/proxyUser/health-data/{userId}")
+    public HealthDetails getFeedbackProxyInformation(@PathVariable("userId") long userId);
+
 }

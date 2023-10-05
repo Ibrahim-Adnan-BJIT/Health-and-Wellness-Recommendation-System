@@ -120,6 +120,8 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     @Override
     public FeedbackResponseDTO getFeedbackByUser(long userId) {
+        recommendationFeign.getHealthProxyInformation(userId);
+
         SleepFeedback sleepFeedback = sleepFeedbackRepository.findByUserId(userId)
                 .orElse(new SleepFeedback());
 
