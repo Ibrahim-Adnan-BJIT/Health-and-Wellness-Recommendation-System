@@ -135,64 +135,17 @@ public class FeedbackServiceImpl implements FeedbackService {
         return FeedbackResponseDTO
                 .builder()
                 .mentalHealthRecommendationRating(mentalHealthFeedback.getRating())
-                .mentalHealthReview(mentalHealthFeedback.getReview())
+                .mentalHealthReview(mentalHealthFeedback.getReview() == null ?
+                        "Review not given yet" : mentalHealthFeedback.getReview())
                 .exerciseFeedbackRating(exerciseFeedback.getRating())
-                .exerciseReview(exerciseFeedback.getReview())
+                .exerciseReview(exerciseFeedback.getReview() == null ?
+                        "Review not given yet" : exerciseFeedback.getReview())
                 .dietRecommendationRating(dietFeedback.getRating())
-                .dietReview(dietFeedback.getReview())
+                .dietReview(dietFeedback.getReview() == null ?
+                        "Review not given yet" : dietFeedback.getReview())
                 .sleepRecommendationRating(sleepFeedback.getRating())
-                .sleepReview(sleepFeedback.getReview())
+                .sleepReview(sleepFeedback.getReview() == null ?
+                        "Review not given yet" : sleepFeedback.getReview())
                 .build();
     }
-
-    public List<AllFeedbackResponseDTO> getSleepFeedback() {
-        return sleepFeedbackRepository.findAll()
-                .stream().map(this::mapToSleepDTO).toList();
-    }
-
-    public List<AllFeedbackResponseDTO> getDietFeedback() {
-        return dietFeedbackRepository.findAll()
-                .stream().map(this::mapToDietDTO).toList();
-    }
-
-    public List<AllFeedbackResponseDTO> getExerciseFeedback() {
-        return exerciseFeedbackRepository.findAll()
-                .stream().map(this::mapToExerciseDTO).toList();
-    }
-
-    public List<AllFeedbackResponseDTO> getMentalHealthFeedback() {
-        return mentalHealthFeedbackRepository.findAll()
-                .stream().map(this::mapToMentalDTO).toList();
-    }
-
-    private AllFeedbackResponseDTO mapToSleepDTO(SleepFeedback sleepFeedback) {
-        return AllFeedbackResponseDTO.builder()
-                .userId(sleepFeedback.getUserId())
-                .rating(sleepFeedback.getRating())
-                .review(sleepFeedback.getReview()).build();
-    }
-
-    private AllFeedbackResponseDTO mapToDietDTO(DietFeedback dietFeedback) {
-        return AllFeedbackResponseDTO.builder()
-                .userId(dietFeedback.getUserId())
-                .rating(dietFeedback.getRating())
-                .review(dietFeedback.getReview()).build();
-    }
-
-    private AllFeedbackResponseDTO mapToExerciseDTO(ExerciseFeedback exerciseFeedback) {
-        return AllFeedbackResponseDTO.builder()
-                .userId(exerciseFeedback.getUserId())
-                .rating(exerciseFeedback.getRating())
-                .review(exerciseFeedback.getReview())
-                .build();
-    }
-
-    private AllFeedbackResponseDTO mapToMentalDTO(MentalHealthFeedback mentalHealthFeedback) {
-        return AllFeedbackResponseDTO.builder()
-                .userId(mentalHealthFeedback.getUserId())
-                .rating(mentalHealthFeedback.getRating())
-                .review(mentalHealthFeedback.getReview())
-                .build();
-    }
-
 }

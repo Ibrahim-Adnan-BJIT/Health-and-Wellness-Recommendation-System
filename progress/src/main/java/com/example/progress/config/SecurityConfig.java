@@ -17,14 +17,15 @@ import lombok.RequiredArgsConstructor;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-	private final JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtAuthenticationFilter jwtAuthFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/**").permitAll()
+                        .requestMatchers("/api/v1/**").hasRole("USER")
+                        .requestMatchers("/api/v2/**").permitAll()
                         .requestMatchers("/actuator/health").permitAll()
                         //.requestMatchers(HttpMethod.GET, "/api/**").hasRole("USER")
                         .anyRequest().authenticated()

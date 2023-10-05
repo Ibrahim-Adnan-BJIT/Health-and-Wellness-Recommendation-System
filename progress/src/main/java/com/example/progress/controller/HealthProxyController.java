@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,10 +17,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class HealthProxyController {
     private final PhysicalHealthService physicalHealthService;
     private final MentalHealthService mentalHealthService;
+
     @PostMapping("/track")
-    public ProxyResponse addHealthProgress(@RequestBody HealthDetails healthDetails) {
-        physicalHealthService.addPhysicalHealthProgress(healthDetails);
-        mentalHealthService.addMentalHealthProgress(healthDetails);
-        return new ProxyResponse("progress is tracked");
+    public Mono<ProxyResponse> addHealthProgress(@RequestBody HealthDetails healthDetails) {
+        return Mono.fromRunnable(() -> {
+            physicalHealthService.addPhysicalHealthProgress(healthDetails);
+            mentalHealthService.addMentalHealthProgress(healthDetails);
+        }).thenReturn(new ProxyResponse("progress is tracked"));
     }
 }

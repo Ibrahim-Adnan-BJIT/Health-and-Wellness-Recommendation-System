@@ -14,11 +14,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MentalHealthFeedback {
+public class MentalHealthFeedback extends FeedbackParent{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    private long userId;
-    private double rating;
-    private String review;
+//    private long userId;
+//    private double rating;
+//    private String review;
 }

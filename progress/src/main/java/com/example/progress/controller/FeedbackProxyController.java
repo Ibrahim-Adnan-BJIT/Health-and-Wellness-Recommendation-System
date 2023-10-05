@@ -1,24 +1,40 @@
 package com.example.progress.controller;
 
-import com.example.progress.dto.request.FeedbackRequestDTO;
-import com.example.progress.dto.response.FeedbackResponseDTO;
-import com.example.progress.repository.SleepFeedbackRepository;
-import com.example.progress.response.ResponseHandler;
-import org.springframework.http.HttpStatus;
+import com.example.progress.dto.response.AllFeedbackResponseDTO;
+import com.example.progress.service.FeedbackProxyService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/v2/feedback")
+@RequiredArgsConstructor
 public class FeedbackProxyController {
-    @GetMapping("/get")
-    public List<SleepFeedbackRepository> getSleepFeedback() {
+    private final FeedbackProxyService feedbackProxyService;
 
-        return null;
+    @GetMapping("/sleep/get")
+    public List<AllFeedbackResponseDTO> getSleepFeedback() {
+        return feedbackProxyService.getSleepFeedback();
+    }
+
+    @GetMapping("/diet/get")
+    public List<AllFeedbackResponseDTO> getDietFeedback() {
+
+        return feedbackProxyService.getDietFeedback();
+    }
+
+    @GetMapping("/exercise/get")
+    public List<AllFeedbackResponseDTO> getExerciseFeedback() {
+
+        return feedbackProxyService.getExerciseFeedback();
+    }
+
+    @GetMapping("/mental-health/get")
+    public List<AllFeedbackResponseDTO> getMentalHealthFeedback() {
+
+        return feedbackProxyService.getMentalHealthFeedback();
     }
 }
