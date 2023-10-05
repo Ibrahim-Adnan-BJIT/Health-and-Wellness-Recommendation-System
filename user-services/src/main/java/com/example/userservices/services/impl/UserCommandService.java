@@ -3,6 +3,7 @@ package com.example.userservices.services.impl;
 import com.example.userservices.DTO.request.*;
 import com.example.userservices.exception.CustomeException;
 import com.example.userservices.feignclient.RecommendationsClient;
+import com.example.userservices.feignclient.handleException.FeignCustomException;
 import com.example.userservices.model.*;
 import com.example.userservices.repository.HealthRepository;
 import com.example.userservices.repository.UserRepository;
@@ -95,10 +96,16 @@ public class UserCommandService implements IUserCommandService {
         healthRepository.save(healthDetails);
         // Send data to microservices
         sendToRecommendationMicroservice(healthDetails);
+//        try {
+//            recommendationsClient.importUserHealthData(healthDetails);
+//        } catch (FeignCustomException ex) {
+//            log.error("Failed to import");
+//        }
     }
 
     // Send data to Recommendation Microservices
     private void sendToRecommendationMicroservice(HealthDetails healthDetails) {
+        System.out.println("KKK");
         recommendationServiceClient.importUserHealthData(healthDetails)
                 .subscribe(
                         response -> log.info("Data received successfully by Recommendation Microservice"),

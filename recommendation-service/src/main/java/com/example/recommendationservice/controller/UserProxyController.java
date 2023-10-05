@@ -22,6 +22,7 @@ public class UserProxyController {
 
     @PostMapping("/health-data")
     public Mono<ProxyResponse> importUserHealthData(@RequestBody HealthDetails healthDetails) {
+
         return Mono.fromRunnable(() -> healthDetailsService.importHealthDetails(healthDetails))
                 .thenReturn(new ProxyResponse("Data received successfully"));
     }
