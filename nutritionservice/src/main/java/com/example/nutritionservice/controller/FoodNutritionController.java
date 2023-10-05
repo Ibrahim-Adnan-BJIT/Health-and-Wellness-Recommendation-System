@@ -12,11 +12,11 @@ import java.util.Date;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/food")
 public class FoodNutritionController {
     private final FoodNutritionService foodNutritionService;
 
-    @PostMapping("/food/{foodId}/nutrition/{nutritionId}/add")
+    @PostMapping("/{foodId}/nutrition/{nutritionId}/add")
     public ResponseEntity<?> addFoodNutrition(@PathVariable long foodId,
                                               @PathVariable long nutritionId,
                                               @RequestBody FoodNutritionRequestDTO foodNutritionDto) {

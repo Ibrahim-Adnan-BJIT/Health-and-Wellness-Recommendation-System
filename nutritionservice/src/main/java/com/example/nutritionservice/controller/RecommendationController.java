@@ -16,29 +16,17 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/v1/recommendation")
 public class RecommendationController {
     private final RecommendationService recommendationService;
     private final AuthenticationService authenticationService;
 
-    @GetMapping("/v1/diet-recommendation")
+    @GetMapping("/food/diet/get")
     public ResponseEntity<?> getRecommendation() {
         long userId = authenticationService.getAuthenticatedUser();
         RecommendationDto recommendationDto = recommendationService.dietRecommendation(userId);
         return ResponseHandler.generateResponse(new Date(), "Dietary Recommendation",
                 HttpStatus.OK, recommendationDto);
-    }
-
-    @PostMapping("/v2/diet-recommendation")
-    public ProxyResponse addRecommendation(@RequestBody HealthDetails healthDetails) {
-        recommendationService.addRecommendation(healthDetails);
-        return new ProxyResponse("recommendation successful");
-    }
-
-    @GetMapping("/v2/check-recommendation/user/{userID}/recommendation/{recommendationId}")
-    public boolean isRecommendationExist(@PathVariable long userID,
-                                         @PathVariable long recommendationId) {
-        return recommendationService.isRecommendationExist(userID, recommendationId);
     }
 
 
