@@ -1,9 +1,6 @@
 package com.example.recommendationservice.services.impl;
 
-import com.example.recommendationservice.external.Enum.ActivityLevel;
-import com.example.recommendationservice.external.Enum.BloodGroup;
-import com.example.recommendationservice.external.Enum.Gender;
-import com.example.recommendationservice.external.Enum.GoalType;
+import com.example.recommendationservice.external.Enum.*;
 import com.example.recommendationservice.external.HealthDetails;
 import com.example.recommendationservice.model.Diet;
 import com.example.recommendationservice.repository.DietRepository;
@@ -65,12 +62,6 @@ public class DietService {
 
         // Save in Database
         dietRepository.save(dietRecommendation);
-    }
-
-    // Generate Recommendation
-    private List<String> generateAdditionalRecommendations(HealthDetails healthDetails) {
-        List<String> recommendations = new ArrayList<>();
-        return recommendations;
     }
 
     // Calculate Daily Calorie Intake
@@ -176,56 +167,6 @@ public class DietService {
         }
 
         return carbohydrateIntake;
-    }
-
-    // Calculate Vitamin Recommendation
-    private String calculateVitaminRecommendations(HealthDetails healthDetails) {
-        StringBuilder recommendations = new StringBuilder();
-
-        // Determine the user's age, gender, and dietary preferences
-        long age = healthDetails.getAge();
-        Gender gender = healthDetails.getGender();
-        BloodGroup bloodGroup = healthDetails.getBloodGroup();
-
-        // Calculate vitamin recommendations based on age and gender
-        if (age >= 18) {
-            // Recommendations for adults (age 18+)
-            recommendations.append("For adults:");
-
-            if (gender == Gender.MALE) {
-                recommendations.append("- Consider a diet rich in vitamin A, C, and D.");
-                recommendations.append("- Include sources of vitamin B12 for energy and nervous system health.");
-            } else {
-                recommendations.append("- Ensure adequate intake of vitamin A, C, and D.");
-                recommendations.append("- Consume foods high in iron and folic acid for blood health.");
-            }
-        } else {
-            // Recommendations for individuals under 18
-            recommendations.append("For individuals under 18:");
-            recommendations.append("- Focus on a balanced diet with sufficient vitamins for growth and development.");
-        }
-
-        // Additional recommendations based on blood group
-        switch (bloodGroup) {
-            case A_POSITIVE ->
-                    recommendations.append("- Individuals with A+ blood type may benefit from a diet rich in leafy greens and lean proteins.");
-            case A_NEGATIVE ->
-                    recommendations.append("- Individuals with A- blood type should consider a diet similar to A+ with an emphasis on plant-based proteins.");
-            case B_POSITIVE ->
-                    recommendations.append("- Individuals with B+ blood type should focus on a balanced diet with diverse food groups.");
-            case B_NEGATIVE ->
-                    recommendations.append("- Individuals with B- blood type may benefit from a diet that includes plenty of fruits, vegetables, and lean proteins.");
-            case AB_POSITIVE ->
-                    recommendations.append("- Individuals with AB+ blood type can enjoy a varied diet, including a wide range of foods.");
-            case AB_NEGATIVE ->
-                    recommendations.append("- Individuals with AB- blood type should consider a diet similar to AB+ but may need to watch their iron intake.");
-            case O_POSITIVE ->
-                    recommendations.append("- Those with O+ blood type may benefit from a diet with lean proteins, fruits, and vegetables.");
-            case O_NEGATIVE ->
-                    recommendations.append("- Individuals with O- blood type should follow a diet similar to O+ but may need to monitor their iron levels.");
-        }
-        System.out.println(recommendations.toString());
-        return recommendations.toString();
     }
 
     // Calculate Fat Intake
@@ -388,6 +329,169 @@ public class DietService {
         }
 
         return preferredBMI;
+    }
+
+    // Calculate Vitamin Recommendation
+    private String calculateVitaminRecommendations(HealthDetails healthDetails) {
+        StringBuilder recommendations = new StringBuilder();
+
+        // Determine the user's age, gender, and dietary preferences
+        long age = healthDetails.getAge();
+        Gender gender = healthDetails.getGender();
+        BloodGroup bloodGroup = healthDetails.getBloodGroup();
+
+        // Calculate vitamin recommendations based on age and gender
+        if (age >= 18) {
+            // Recommendations for adults (age 18+)
+            recommendations.append("For adults:");
+
+            if (gender == Gender.MALE) {
+                recommendations.append("- Consider a diet rich in vitamin A, C, and D.");
+                recommendations.append("- Include sources of vitamin B12 for energy and nervous system health.");
+            } else {
+                recommendations.append("- Ensure adequate intake of vitamin A, C, and D.");
+                recommendations.append("- Consume foods high in iron and folic acid for blood health.");
+            }
+        } else {
+            // Recommendations for individuals under 18
+            recommendations.append("For individuals under 18:");
+            recommendations.append("- Focus on a balanced diet with sufficient vitamins for growth and development.");
+        }
+
+        // Additional recommendations based on blood group
+        switch (bloodGroup) {
+            case A_POSITIVE ->
+                    recommendations.append("- Individuals with A+ blood type may benefit from a diet rich in leafy greens and lean proteins.");
+            case A_NEGATIVE ->
+                    recommendations.append("- Individuals with A- blood type should consider a diet similar to A+ with an emphasis on plant-based proteins.");
+            case B_POSITIVE ->
+                    recommendations.append("- Individuals with B+ blood type should focus on a balanced diet with diverse food groups.");
+            case B_NEGATIVE ->
+                    recommendations.append("- Individuals with B- blood type may benefit from a diet that includes plenty of fruits, vegetables, and lean proteins.");
+            case AB_POSITIVE ->
+                    recommendations.append("- Individuals with AB+ blood type can enjoy a varied diet, including a wide range of foods.");
+            case AB_NEGATIVE ->
+                    recommendations.append("- Individuals with AB- blood type should consider a diet similar to AB+ but may need to watch their iron intake.");
+            case O_POSITIVE ->
+                    recommendations.append("- Those with O+ blood type may benefit from a diet with lean proteins, fruits, and vegetables.");
+            case O_NEGATIVE ->
+                    recommendations.append("- Individuals with O- blood type should follow a diet similar to O+ but may need to monitor their iron levels.");
+        }
+        return recommendations.toString();
+    }
+
+
+    // Generate Recommendation
+    private List<String> generateAdditionalRecommendations(HealthDetails healthDetails) {
+        List<String> recommendations = new ArrayList<>();
+
+        // Recommendations based on sleep, alcohol, caffeine, stress  issues
+        recommendations.addAll(generateSleepIssueRecommendations(healthDetails.getPhysicalHealth().getSleepIssue()));
+        recommendations.addAll(generateAlcoholRecommendations(healthDetails.getPhysicalHealth().getAlcoholConsumption()));
+        recommendations.addAll(generateCaffeineRecommendations(healthDetails.getPhysicalHealth().getCaffeineConsumption()));
+        recommendations.addAll(generateStressRecommendations(healthDetails.getMentalHealth().getStressLevel()));
+
+        return recommendations;
+    }
+
+    /**
+     * Generates sleep issue recommendations based on the type of sleep issue.
+     *
+     * @param sleepIssue The type of sleep issue.
+     * @return A list of recommendations.
+     */
+    private List<String> generateSleepIssueRecommendations(SleepIssue sleepIssue) {
+        List<String> recommendations = new ArrayList<>();
+
+        if (sleepIssue != null) {
+            switch (sleepIssue) {
+                case INSOMNIA -> recommendations.add("Consider practicing relaxation techniques to improve sleep.");
+                case SNORING -> recommendations.add("Sleep on your side to reduce snoring.");
+                case SLEEP_APNEA ->
+                        recommendations.add("Consult a healthcare professional for sleep apnea diagnosis and treatment.");
+                default -> recommendations.add("Identify and address any underlying sleep issues.");
+            }
+        }
+
+        return recommendations;
+    }
+
+    /**
+     * Generates alcohol consumption recommendations based on the level of alcohol consumption.
+     *
+     * @param alcoholConsumption The level of alcohol consumption.
+     * @return A list of recommendations.
+     */
+    private List<String> generateAlcoholRecommendations(AlcoholConsumption alcoholConsumption) {
+        List<String> recommendations = new ArrayList<>();
+
+        if (alcoholConsumption != null) {
+            switch (alcoholConsumption) {
+                case HEAVY -> {
+                    recommendations.add("Limit heavy alcohol consumption, especially close to bedtime.");
+                    recommendations.add("Consider reducing alcohol intake to improve sleep quality.");
+                }
+                case MODERATE ->
+                        recommendations.add("Moderate alcohol consumption is generally acceptable, but avoid excessive drinking close to bedtime.");
+                case OCCASIONAL -> recommendations.add("Low alcohol consumption is less likely to interfere with sleep.");
+                case NONE ->
+                        recommendations.add("Avoid alcohol consumption, especially close to bedtime, for the best sleep quality.");
+            }
+        }
+
+        return recommendations;
+    }
+
+    /**
+     * Generates caffeine consumption recommendations based on the level of caffeine consumption.
+     *
+     * @param caffeineConsumption The level of caffeine consumption.
+     * @return A list of recommendations.
+     */
+    private List<String> generateCaffeineRecommendations(CaffeineConsumption caffeineConsumption) {
+        List<String> recommendations = new ArrayList<>();
+
+        if (caffeineConsumption != null) {
+            switch (caffeineConsumption) {
+                case HIGH -> {
+                    recommendations.add("Reduce caffeine intake, especially in the afternoon and evening.");
+                    recommendations.add("Avoid consuming caffeine close to bedtime to improve sleep quality.");
+                }
+                case MODERATE ->
+                        recommendations.add("Moderate caffeine consumption is generally acceptable, but limit intake in the evening.");
+                case LOW -> recommendations.add("Low caffeine consumption is less likely to interfere with sleep.");
+                case NONE ->
+                        recommendations.add("Avoid caffeine consumption, especially in the afternoon and evening, for better sleep.");
+            }
+        }
+
+        return recommendations;
+    }
+
+    /**
+     * Generates stress management recommendations based on the level of stress.
+     *
+     * @param stressLevel The level of stress.
+     * @return A list of recommendations.
+     */
+    private List<String> generateStressRecommendations(StressLevel stressLevel) {
+        List<String> recommendations = new ArrayList<>();
+
+        if (stressLevel != null) {
+            switch (stressLevel) {
+                case HIGH -> {
+                    recommendations.add("Practice stress-reduction techniques such as meditation and deep breathing.");
+                    recommendations.add("Consider regular exercise to alleviate stress and improve sleep.");
+                    recommendations.add("Limit exposure to stressors, especially close to bedtime.");
+                }
+                case MODERATE ->
+                        recommendations.add("Manage stress through relaxation exercises and a calming bedtime routine.");
+                case LOW ->
+                        recommendations.add("Maintain a low-stress environment and engage in relaxing activities before sleep.");
+            }
+        }
+
+        return recommendations;
     }
 }
 
