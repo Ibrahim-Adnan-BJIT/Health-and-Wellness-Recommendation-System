@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -30,10 +31,12 @@ public class ModeTrackingController {
     }
 
     @PostMapping("/v2/mode/track")
-    public ProxyResponse trackMode(@RequestBody HealthDetails mode) {
-        ModeEntity trackedMode = modeTrackingService.trackMode(mode);
-        ExerciseEntity exercise = exerciseService.exerciseRecommendation(mode);
-        return new ProxyResponse("Successfully created");
+    public Mono<ProxyResponse> trackMode(@RequestBody HealthDetails mode) {
+        return Mono.fromRunnable(() -> {
+                    ModeEntity trackedMode = modeTrackingService.trackMode(mode);
+                    ExerciseEntity exercise = exerciseService.exerciseRecommendation(mode);
+                })
+                .thenReturn(new ProxyResponse("Successfully created"));
     }
 
     @GetMapping("/v1/mode/history")
