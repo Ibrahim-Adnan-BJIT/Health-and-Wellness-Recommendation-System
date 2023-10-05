@@ -3,8 +3,8 @@ package com.example.userservices.webclient.impl;
 import com.example.userservices.DTO.response.ProxyResponse;
 import com.example.userservices.model.HealthDetails;
 import com.example.userservices.utils.Constants;
-import com.example.userservices.webclient.RecommendationServiceClient;
-import lombok.RequiredArgsConstructor;
+import com.example.userservices.webclient.IRecommendationServiceClient;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -13,12 +13,14 @@ import reactor.util.retry.Retry;
 import java.time.Duration;
 
 @Service
-public class RecommendationServiceClientImpl implements RecommendationServiceClient {
+public class RecommendationServiceClient implements IRecommendationServiceClient {
     private final WebClient.Builder webClientBuilder;
 
-    public RecommendationServiceClientImpl(WebClient.Builder webClientBuilder) {
+    public RecommendationServiceClient(WebClient.Builder webClientBuilder) {
         this.webClientBuilder = webClientBuilder.baseUrl("http://localhost:8203");
     }
+
+    @CircuitBreaker(name = "CircuitBreakerService", fallbackMethod = "healthDataFallback")
     @Override
     public Mono<ProxyResponse> importUserHealthData(HealthDetails healthDetails) {
         return webClientBuilder

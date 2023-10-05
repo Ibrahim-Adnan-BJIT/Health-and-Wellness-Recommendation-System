@@ -9,10 +9,12 @@ import com.example.userservices.response.ResponseHandler;
 import com.example.userservices.services.IAuthenticationService;
 import com.example.userservices.services.IUserCommandService;
 import com.example.userservices.services.IUserQueryService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping("/api/v1/user")
@@ -25,7 +27,7 @@ public class UserController {
 
     // Register For your profile and Health information
     @PostMapping("/create")
-    public ResponseEntity<Object> createUserProfileHealthInformation(@RequestBody UserRequestDTO userRequestDTO){
+    public ResponseEntity<Object> createUserProfileHealthInformation(@Valid @RequestBody UserRequestDTO userRequestDTO){
         long userId = authenticationService.getAuthenticatedUser();
         userCommandService.createUserDetails(userId, userRequestDTO);
         return ResponseHandler.generateResponse("Create User Profile Successfully", HttpStatus.CREATED);
@@ -33,11 +35,12 @@ public class UserController {
 
     // Update user Health information
     @PutMapping("/update")
-    public ResponseEntity<Object> updateUserHealthInformation(@RequestBody HealthDetailsDTO healthDetailsDTO){
+    public ResponseEntity<Object> updateUserHealthInformation(@Valid@RequestBody HealthDetailsDTO healthDetailsDTO){
         long userId = authenticationService.getAuthenticatedUser();
         userCommandService.updateHealthInformation(userId, healthDetailsDTO);
         return ResponseHandler.generateResponse("Update Health Information Successfully", HttpStatus.OK);
     }
+
 
     // Get User Health Information
     @GetMapping("/health-data")

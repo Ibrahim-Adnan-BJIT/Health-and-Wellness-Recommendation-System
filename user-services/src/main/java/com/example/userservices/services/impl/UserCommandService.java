@@ -9,7 +9,8 @@ import com.example.userservices.repository.UserRepository;
 import com.example.userservices.services.IUserCommandService;
 import com.example.userservices.utils.Constants;
 import com.example.userservices.utils.EnumValidation;
-import com.example.userservices.webclient.RecommendationServiceClient;
+import com.example.userservices.webclient.IProgressServiceClient;
+import com.example.userservices.webclient.IRecommendationServiceClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -23,13 +24,15 @@ public class UserCommandService implements IUserCommandService {
     private final UserRepository userRepository;
     private final HealthRepository healthRepository;
     private final RecommendationsClient recommendationsClient;
-    private final RecommendationServiceClient recommendationServiceClient;
+    private final IRecommendationServiceClient recommendationServiceClient;
+    private final IProgressServiceClient progressServiceClient;
 
-    public UserCommandService(UserRepository userRepository, HealthRepository healthRepository, RecommendationsClient recommendationsClient, RecommendationServiceClient recommendationServiceClient) {
+    public UserCommandService(UserRepository userRepository, HealthRepository healthRepository, RecommendationsClient recommendationsClient, IRecommendationServiceClient recommendationServiceClient, IProgressServiceClient progressServiceClient) {
         this.userRepository = userRepository;
         this.healthRepository = healthRepository;
         this.recommendationsClient = recommendationsClient;
         this.recommendationServiceClient = recommendationServiceClient;
+        this.progressServiceClient = progressServiceClient;
     }
 
     // Create User Details and Health Details
@@ -71,6 +74,7 @@ public class UserCommandService implements IUserCommandService {
         healthRepository.save(healthDetails);
         // Send data to microservices
         sendToRecommendationMicroservice(healthDetails);
+        sendToProgressMicroservice(healthDetails);
     }
 
     @Override
@@ -93,8 +97,9 @@ public class UserCommandService implements IUserCommandService {
 
         // Save in Database
         healthRepository.save(healthDetails);
-        // Send data to microservices
+        // Send data to Other Microservices
         sendToRecommendationMicroservice(healthDetails);
+        sendToProgressMicroservice(healthDetails);
     }
 
     // Send data to Recommendation Microservices
@@ -105,6 +110,16 @@ public class UserCommandService implements IUserCommandService {
                         ex -> log.error("Failed to import to Recommendation Microservice: " + ex.getMessage())
                 );
     }
+
+    // Send data to Progress Microservices
+    private void sendToProgressMicroservice(HealthDetails healthDetails) {
+        progressServiceClient.addHealthProgress(healthDetails)
+                .subscribe(
+                        response -> log.info("Data received successfully by Progress Microservice"),
+                        ex -> log.error("Failed to import to Progress Microservice: " + ex.getMessage())
+                );
+    }
+
 
     // Map DTO to entity in User Profile
     private UserProfile createAndSaveUserProfile(long userId, UserRequestDTO userRequestDTO) {
