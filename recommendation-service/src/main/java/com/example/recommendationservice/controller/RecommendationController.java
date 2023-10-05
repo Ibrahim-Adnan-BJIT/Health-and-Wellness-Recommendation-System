@@ -26,6 +26,7 @@ public class RecommendationController {
         this.authenticationService = authenticationService;
     }
 
+    // Get Sleep recommendations
     @GetMapping("/sleep")
     public ResponseEntity<Object> getSleepRecommendations(){
         long userId = authenticationService.getAuthenticatedUser();
@@ -33,6 +34,7 @@ public class RecommendationController {
         return ResponseHandler.generateResponse("Fetch Data Successfully", HttpStatus.OK, response);
     }
 
+    // Get Exercise recommendations
     @GetMapping("/exercise")
     public ResponseEntity<Object> getExerciseRecommendations(){
         long userId = authenticationService.getAuthenticatedUser();
@@ -40,6 +42,7 @@ public class RecommendationController {
         return ResponseHandler.generateResponse("Fetch Data Successfully", HttpStatus.OK, response);
     }
 
+    // Get Diet recommendations
     @GetMapping("/diet")
     public ResponseEntity<Object> getDietRecommendations(){
         long userId = authenticationService.getAuthenticatedUser();
