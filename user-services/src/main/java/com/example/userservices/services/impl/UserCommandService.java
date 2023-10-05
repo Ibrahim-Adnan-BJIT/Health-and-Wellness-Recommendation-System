@@ -38,7 +38,7 @@ public class UserCommandService implements IUserCommandService {
         this.mentalHealthServiceClient = mentalHealthServiceClient;
     }
 
-    // Create User Details and Health Details
+    // Create User Profile and Health Details
     @Override
     public void createUserDetails(long userId, UserRequestDTO userRequestDTO) {
         // Check if the user already created profile or not
@@ -81,6 +81,7 @@ public class UserCommandService implements IUserCommandService {
         sendToMentalHealthMicroservice(healthDetails);
     }
 
+    // Update Health Information
     @Override
     public void updateHealthInformation(long userId, HealthDetailsDTO healthDetailsDTO) {
         // Check if the user already created profile or not
