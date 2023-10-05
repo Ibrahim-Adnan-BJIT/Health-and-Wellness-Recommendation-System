@@ -1,0 +1,44 @@
+spring:
+  application:
+    name: progress-service
+  datasource:
+    url: jdbc:mysql://localhost:3306/progressdb
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+      database: mysql
+      database-platform: org.hibernate.dialect.MySQLDialect
+
+resilience4j:
+  circuit breaker:
+    instances:
+      CircuitBreakerService:
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 6
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 4
+        sliding-window-size: 10
+        register-health-indicator: true
+
+management:
+  health:
+    circuit breakers:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: always
+
+server:
+  port: 8081
