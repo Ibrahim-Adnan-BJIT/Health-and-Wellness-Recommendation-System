@@ -5,6 +5,7 @@ import com.mode.main.entity.ExerciseEntity;
 import com.mode.main.entity.ModeEntity;
 import com.mode.main.service.ExerciseService;
 import com.mode.main.service.ModeTrackingService;
+import com.mode.main.service.impl.AuthenticationService;
 import com.mode.main.sourcemodel.HealthDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,10 +21,12 @@ public class ModeTrackingController {
     private final ModeTrackingService modeTrackingService;
     @Autowired
     private final ExerciseService exerciseService;
+    private final AuthenticationService authenticationService;
 
-    public ModeTrackingController(ModeTrackingService modeTrackingService, ExerciseService exerciseService) {
+    public ModeTrackingController(ModeTrackingService modeTrackingService, ExerciseService exerciseService, AuthenticationService authenticationService) {
         this.modeTrackingService = modeTrackingService;
         this.exerciseService = exerciseService;
+        this.authenticationService = authenticationService;
     }
 
     @PostMapping("/v2/mode/track")
@@ -33,14 +36,16 @@ public class ModeTrackingController {
         return new ProxyResponse("Successfully created");
     }
 
-    @GetMapping("/v1/mode/history/{userId}")
-    public ResponseEntity<List<ModeEntity>> getUserModeHistory(@PathVariable Long userId) {
+    @GetMapping("/v1/mode/history")
+    public ResponseEntity<List<ModeEntity>> getUserModeHistory() {
+        long userId = authenticationService.getAuthenticatedUser();
         List<ModeEntity> userModeHistory = modeTrackingService.getUserModeHistory(userId);
         return new ResponseEntity<>(userModeHistory, HttpStatus.OK);
     }
 
-    @GetMapping("/v1/mode/exercise/{userId}")
-    public ResponseEntity<ExerciseEntity> getExercises(@PathVariable Long userId) {
+    @GetMapping("/v1/mode/exercise")
+    public ResponseEntity<ExerciseEntity> getExercises() {
+        long userId = authenticationService.getAuthenticatedUser();
         ExerciseEntity exercises = exerciseService.getExercises(userId);
         return new ResponseEntity<>(exercises, HttpStatus.OK);
     }
