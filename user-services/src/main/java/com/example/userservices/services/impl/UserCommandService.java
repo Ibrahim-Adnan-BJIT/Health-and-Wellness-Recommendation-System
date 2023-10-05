@@ -9,6 +9,7 @@ import com.example.userservices.repository.UserRepository;
 import com.example.userservices.services.IUserCommandService;
 import com.example.userservices.utils.Constants;
 import com.example.userservices.utils.EnumValidation;
+import com.example.userservices.webclient.IMentalHealthServiceClient;
 import com.example.userservices.webclient.IProgressServiceClient;
 import com.example.userservices.webclient.IRecommendationServiceClient;
 import lombok.extern.slf4j.Slf4j;
@@ -26,13 +27,15 @@ public class UserCommandService implements IUserCommandService {
     private final RecommendationsClient recommendationsClient;
     private final IRecommendationServiceClient recommendationServiceClient;
     private final IProgressServiceClient progressServiceClient;
+    private final IMentalHealthServiceClient mentalHealthServiceClient;
 
-    public UserCommandService(UserRepository userRepository, HealthRepository healthRepository, RecommendationsClient recommendationsClient, IRecommendationServiceClient recommendationServiceClient, IProgressServiceClient progressServiceClient) {
+    public UserCommandService(UserRepository userRepository, HealthRepository healthRepository, RecommendationsClient recommendationsClient, IRecommendationServiceClient recommendationServiceClient, IProgressServiceClient progressServiceClient, IMentalHealthServiceClient mentalHealthServiceClient) {
         this.userRepository = userRepository;
         this.healthRepository = healthRepository;
         this.recommendationsClient = recommendationsClient;
         this.recommendationServiceClient = recommendationServiceClient;
         this.progressServiceClient = progressServiceClient;
+        this.mentalHealthServiceClient = mentalHealthServiceClient;
     }
 
     // Create User Details and Health Details
@@ -75,6 +78,7 @@ public class UserCommandService implements IUserCommandService {
         // Send data to microservices
         sendToRecommendationMicroservice(healthDetails);
         sendToProgressMicroservice(healthDetails);
+        sendToMentalHealthMicroservice(healthDetails);
     }
 
     @Override
@@ -100,6 +104,7 @@ public class UserCommandService implements IUserCommandService {
         // Send data to Other Microservices
         sendToRecommendationMicroservice(healthDetails);
         sendToProgressMicroservice(healthDetails);
+        sendToMentalHealthMicroservice(healthDetails);
     }
 
     // Send data to Recommendation Microservices
@@ -117,6 +122,15 @@ public class UserCommandService implements IUserCommandService {
                 .subscribe(
                         response -> log.info("Data received successfully by Progress Microservice"),
                         ex -> log.error("Failed to import to Progress Microservice: " + ex.getMessage())
+                );
+    }
+
+    // Send data to Mental Health Microservices
+    private void sendToMentalHealthMicroservice(HealthDetails healthDetails) {
+        mentalHealthServiceClient.trackMode(healthDetails)
+                .subscribe(
+                        response -> log.info("Data received successfully by Mental Health Microservice"),
+                        ex -> log.error("Failed to import to Mental Health Microservice: " + ex.getMessage())
                 );
     }
 
