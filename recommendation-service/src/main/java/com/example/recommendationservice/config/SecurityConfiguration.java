@@ -25,7 +25,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v2/user/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "api/v1/recommendations/**").hasRole(Constants.ROLE_USER)
-                        .requestMatchers( "/api/v1/exercise/**").hasRole(Constants.ROLE_USER)
+                        .requestMatchers( "/api/v1/exercise/**").hasRole(Constants.ROLE_ADMIN)
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
