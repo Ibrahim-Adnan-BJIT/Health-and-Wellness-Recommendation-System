@@ -25,8 +25,13 @@ resilience4j:
         automatic-transition-from-open-to-half-open-enabled: true
         wait-duration-in-open-state: 5s
         permitted-number-of-calls-in-half-open-state: 4
-        sliding-window-size: 100
+        sliding-window-size: 10
         register-health-indicator: true
+
+      circuitBreaker.events logger:
+        enabled: true
+        writeToLoggerName: resilience4j-events
+        writeToLoggerLevel: INFO
 
 management:
   health:
