@@ -5,6 +5,7 @@ import com.example.progress.dto.response.FeedbackResponseDTO;
 import com.example.progress.response.ResponseHandler;
 import com.example.progress.service.AuthenticationService;
 import com.example.progress.service.FeedbackService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,28 +21,28 @@ public class FeedbackController {
     private final AuthenticationService authenticationService;
 
     @PostMapping("/diet/add")
-    public ResponseEntity<?> addDietFeedback(@RequestBody FeedbackRequestDTO feedbackRequestDTO) {
+    public ResponseEntity<?> addDietFeedback(@Valid @RequestBody FeedbackRequestDTO feedbackRequestDTO) {
         long userId = authenticationService.getAuthenticatedUser();
         feedbackService.addDietFeedback(userId, feedbackRequestDTO);
         return ResponseHandler.generateResponse(new Date(), "feedback added", HttpStatus.OK);
     }
 
     @PostMapping("/exercise/add")
-    public ResponseEntity<?> addExerciseFeedback(@RequestBody FeedbackRequestDTO feedbackRequestDTO) {
+    public ResponseEntity<?> addExerciseFeedback(@Valid @RequestBody FeedbackRequestDTO feedbackRequestDTO) {
         long userId = authenticationService.getAuthenticatedUser();
         feedbackService.addExerciseFeedback(userId, feedbackRequestDTO);
         return ResponseHandler.generateResponse(new Date(), "feedback added", HttpStatus.OK);
     }
 
     @PostMapping("/sleep/add")
-    public ResponseEntity<?> addSleepFeedback(@RequestBody FeedbackRequestDTO feedbackRequestDTO) {
+    public ResponseEntity<?> addSleepFeedback(@Valid @RequestBody FeedbackRequestDTO feedbackRequestDTO) {
         long userId = authenticationService.getAuthenticatedUser();
         feedbackService.addSleepFeedback(userId, feedbackRequestDTO);
         return ResponseHandler.generateResponse(new Date(), "feedback added", HttpStatus.OK);
     }
 
     @PostMapping("/mental-health/add")
-    public ResponseEntity<?> addMentalHealthFeedback(@RequestBody FeedbackRequestDTO feedbackRequestDTO) {
+    public ResponseEntity<?> addMentalHealthFeedback(@Valid @RequestBody FeedbackRequestDTO feedbackRequestDTO) {
         long userId = authenticationService.getAuthenticatedUser();
         feedbackService.addMentalHealthFeedback(userId, feedbackRequestDTO);
         return ResponseHandler.generateResponse(new Date(), "feedback added", HttpStatus.OK);

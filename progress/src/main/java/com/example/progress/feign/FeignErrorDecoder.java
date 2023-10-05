@@ -3,7 +3,6 @@ package com.example.progress.feign;
 import java.io.IOException;
 import java.util.Date;
 
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StreamUtils;
 
@@ -11,7 +10,7 @@ import feign.Response;
 
 import feign.codec.ErrorDecoder;
 
-import com.example.progress.exception.CustomException;
+import com.example.progress.exception.FeignException;
 import com.example.progress.exception.ErrorHandler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -35,7 +34,7 @@ public class FeignErrorDecoder implements ErrorDecoder {
 
 			HttpStatus httpStatus = HttpStatus.valueOf(response.status());
 
-			return new CustomException(timestamp, errorMessage, httpStatus);
+			return new FeignException(timestamp, errorMessage, httpStatus);
 		} catch (IOException e) {
 			return errorDecoder.decode(methodKey, response);
 		}

@@ -1,9 +1,12 @@
 package com.example.progress.controller;
 
 import com.example.progress.dto.response.AllFeedbackResponseDTO;
+import com.example.progress.dto.response.FeedbackResponseDTO;
 import com.example.progress.service.FeedbackProxyService;
+import com.example.progress.service.FeedbackService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FeedbackProxyController {
     private final FeedbackProxyService feedbackProxyService;
+    private final FeedbackService feedbackService;
 
     @GetMapping("/sleep/get")
     public List<AllFeedbackResponseDTO> getSleepFeedback() {
@@ -36,5 +40,11 @@ public class FeedbackProxyController {
     public List<AllFeedbackResponseDTO> getMentalHealthFeedback() {
 
         return feedbackProxyService.getMentalHealthFeedback();
+    }
+
+    @GetMapping("/get/user/{userId}")
+    public FeedbackResponseDTO getUserFeedback(@PathVariable long userId) {
+
+        return feedbackProxyService.getFeedbackByUser(userId);
     }
 }
