@@ -2,8 +2,9 @@ package com.example.userservices.webclient;
 
 import com.example.userservices.DTO.response.ProxyResponse;
 import com.example.userservices.model.HealthDetails;
+import org.springframework.web.bind.annotation.RequestBody;
 import reactor.core.publisher.Mono;
 
-public interface RecommendationServiceClient {
-    Mono<ProxyResponse> importUserHealthData(HealthDetails healthDetails);
+public interface IProgressServiceClient {
+    public Mono<ProxyResponse> addHealthProgress(HealthDetails healthDetails);
 }
