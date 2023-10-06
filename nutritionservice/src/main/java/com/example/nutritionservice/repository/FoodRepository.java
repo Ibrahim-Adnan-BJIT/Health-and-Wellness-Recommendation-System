@@ -20,4 +20,6 @@ public interface FoodRepository extends JpaRepository<Food, Long> {
     List<Food> findFoodsWithTotalCaloriesLessOrEqualThanCalorieIntake(@Param("maxCalories") double maxCalories);
 
     Optional<Food> findByName(String name);
+
+    List<Food> findByNameContaining(String foodName);
 }

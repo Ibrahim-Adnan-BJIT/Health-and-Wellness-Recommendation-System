@@ -1,6 +1,5 @@
 package com.example.nutritionservice.dto.response;
 
-import com.example.nutritionservice.dto.request.FoodRequestDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RecipeResponseDto {
+public class RecipeResponseDTO {
     private String process;
-    private FoodRequestDto foodDto;
 }
