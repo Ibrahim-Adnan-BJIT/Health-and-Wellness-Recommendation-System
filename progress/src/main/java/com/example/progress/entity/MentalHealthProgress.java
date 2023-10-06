@@ -23,6 +23,8 @@ public class MentalHealthProgress {
     private Integer id;
     private long userId;
 
+    private long age;
+
     private boolean depression;
     private boolean anxiety;
     private boolean panicDisorder;

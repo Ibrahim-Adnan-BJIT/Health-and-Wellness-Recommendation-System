@@ -77,7 +77,7 @@ public class ExerciseService implements IExerciseService {
             return DifficultyLevel.valueOf(difficultyLevelValue.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new CustomeException(HttpStatus.BAD_REQUEST, "Invalid DifficultyLevel." +
-                    " Supported levels are EASY, Medium, Hard");
+                    " Supported levels are EASY, MEDIUM, HARD");
         }
     }
 

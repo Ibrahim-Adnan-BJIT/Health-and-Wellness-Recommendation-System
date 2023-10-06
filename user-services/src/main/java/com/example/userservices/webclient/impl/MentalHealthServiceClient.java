@@ -4,6 +4,7 @@ import com.example.userservices.DTO.response.ProxyResponse;
 import com.example.userservices.model.HealthDetails;
 import com.example.userservices.utils.Constants;
 import com.example.userservices.webclient.IMentalHealthServiceClient;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -18,6 +19,8 @@ public class MentalHealthServiceClient implements IMentalHealthServiceClient {
     public MentalHealthServiceClient(WebClient.Builder webClientBuilder) {
         this.webClientBuilder = webClientBuilder.baseUrl("http://localhost:8070");
     }
+
+    @CircuitBreaker(name = "CircuitBreakerService", fallbackMethod = "trackModeDataFallback")
     @Override
     public Mono<ProxyResponse> trackMode(HealthDetails mode) {
         return webClientBuilder

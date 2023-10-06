@@ -8,7 +8,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthenticationService implements IAuthenticationService {
+public class AuthorizationService implements IAuthenticationService {
 
     // Get User ID from Authenticate
     public long getAuthenticatedUser() {
