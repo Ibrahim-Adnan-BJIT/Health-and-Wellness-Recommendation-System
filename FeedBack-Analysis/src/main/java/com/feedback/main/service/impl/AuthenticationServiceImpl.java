@@ -3,9 +3,7 @@ package com.feedback.main.service.impl;
 
 import com.feedback.main.exception.CustomException;
 import com.feedback.main.service.AuthenticationService;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 

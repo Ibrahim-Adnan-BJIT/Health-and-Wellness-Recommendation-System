@@ -4,6 +4,8 @@ import com.feedback.main.model.AllFeedbackResponseDTO;
 import com.feedback.main.model.FeedbackResponseDTO;
 import com.feedback.main.service.FeedbackAnalysisDashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,34 +14,39 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/dashboard")
+@RequestMapping("/api/v1/dashboard")
 public class FeedbackController {
     @Autowired
     private FeedbackAnalysisDashboardService feedbackAnalysisDashboardService;
 
     @GetMapping("/feedback/diet")
-    public List<AllFeedbackResponseDTO> getAllFeedbackFromDiet() {
-        return feedbackAnalysisDashboardService.getAllFeedbackFromDiet();
+    public ResponseEntity<List<AllFeedbackResponseDTO>> getAllFeedbackFromDiet() {
+        List<AllFeedbackResponseDTO> feedbackList = feedbackAnalysisDashboardService.getAllFeedbackFromDiet();
+        return new ResponseEntity<>(feedbackList, HttpStatus.OK);
     }
 
     @GetMapping("/feedback/sleep")
-    public List<AllFeedbackResponseDTO> getAllFeedbackFromSleep() {
-        return feedbackAnalysisDashboardService.getAllFeedbackFromSleep();
+    public ResponseEntity<List<AllFeedbackResponseDTO>> getAllFeedbackFromSleep() {
+        List<AllFeedbackResponseDTO> feedbackList = feedbackAnalysisDashboardService.getAllFeedbackFromSleep();
+        return new ResponseEntity<>(feedbackList, HttpStatus.OK);
     }
 
 
     @GetMapping("/feedback/exercise")
-    public List<AllFeedbackResponseDTO> getAllFeedbackFromExercises() {
-        return feedbackAnalysisDashboardService.getAllFeedbackFromExercises();
+    public ResponseEntity<List<AllFeedbackResponseDTO>> getAllFeedbackFromExercises() {
+        List<AllFeedbackResponseDTO> feedbackList = feedbackAnalysisDashboardService.getAllFeedbackFromExercises();
+        return new ResponseEntity<>(feedbackList, HttpStatus.OK);
     }
 
     @GetMapping("/feedback/mental-health")
-    public List<AllFeedbackResponseDTO> getAllFeedbackFromMentalHealth() {
-        return feedbackAnalysisDashboardService.getAllFeedbackFromMentalHealth();
+    public ResponseEntity<List<AllFeedbackResponseDTO>> getAllFeedbackFromMentalHealth() {
+        List<AllFeedbackResponseDTO> feedbackList = feedbackAnalysisDashboardService.getAllFeedbackFromMentalHealth();
+        return new ResponseEntity<>(feedbackList, HttpStatus.OK);
     }
 
     @GetMapping("/feedback/all/{userId}")
-    public FeedbackResponseDTO getAllFeedbackByUserId(@PathVariable Long userId) {
-        return feedbackAnalysisDashboardService.getAllFeedbackByUserId(userId);
+    public ResponseEntity<FeedbackResponseDTO> getAllFeedbackByUserId(@PathVariable Long userId) {
+        FeedbackResponseDTO allFeedbackResponseDTO = feedbackAnalysisDashboardService.getAllFeedbackByUserId(userId);
+        return new ResponseEntity<>(allFeedbackResponseDTO, HttpStatus.OK);
     }
 }

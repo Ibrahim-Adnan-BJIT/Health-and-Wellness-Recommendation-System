@@ -18,10 +18,6 @@ public class FeedbackAnalysisDashboardService {
     @Autowired
     private RecommendationFeign recommendationFeign;
 
-    //@RequestMapping("/api/v2/feedback")@GetMapping("/sleep/get")
-    //@GetMapping("/diet/get")
-    // @GetMapping("/exercise/get")
-    //@GetMapping("/mental-health/get")
 
 
     public List<AllFeedbackResponseDTO> getAllFeedbackFromDiet() throws CustomException {
@@ -72,7 +68,6 @@ public class FeedbackAnalysisDashboardService {
     }
 
 
-    //@GetMapping("/get/user/{userId}")
     public FeedbackResponseDTO getAllFeedbackByUserId(Long userId) throws CustomException {
         return recommendationFeign.getAllFeedbackByUserId(userId);
     }
