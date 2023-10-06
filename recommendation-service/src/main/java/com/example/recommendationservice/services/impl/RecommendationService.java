@@ -152,13 +152,13 @@ public class RecommendationService implements IRecommendationService {
 
                     // Customizations based on Exercise DifficultyLevel and Age Combination
                     DifficultyLevel difficultyLevel = exercise.getDifficultyLevel();
-                    if (difficultyLevel == DifficultyLevel.Hard && (age <20 || age >40)) {
+                    if (difficultyLevel == DifficultyLevel.HARD && (age <20 || age >40)) {
                         duration -= 3;
-                    } else if (difficultyLevel == DifficultyLevel.Hard && age < 40 && age > 20) {
+                    } else if (difficultyLevel == DifficultyLevel.HARD && age < 40 && age > 20) {
                         duration += 7;
-                    } else if (difficultyLevel == DifficultyLevel.Medium && (age <20 || age >40)) {
+                    } else if (difficultyLevel == DifficultyLevel.MEDIUM && (age <20 || age >40)) {
                         duration -= 2;
-                    } else if (difficultyLevel == DifficultyLevel.Medium && age < 40 && age > 20) {
+                    } else if (difficultyLevel == DifficultyLevel.MEDIUM && age < 40 && age > 20) {
                         duration += 7;
                     } else if (difficultyLevel == DifficultyLevel.EASY && (age <20 || age >40)) {
                         duration -= 1;
