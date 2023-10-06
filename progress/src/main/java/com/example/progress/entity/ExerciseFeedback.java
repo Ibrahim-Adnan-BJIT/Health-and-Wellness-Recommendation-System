@@ -18,7 +18,4 @@ public class ExerciseFeedback extends FeedbackParent{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-//    private long userId;
-//    private double rating;
-//    private String review;
 }
