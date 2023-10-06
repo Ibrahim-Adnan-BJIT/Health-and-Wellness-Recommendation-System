@@ -20,14 +20,21 @@ public class DataProcessService implements IDataProcessService {
     }
 
     /**
-     * Send data To SleepRecommendationService, ExerciseRecommendationService, DietService for data process and calculate based
-     * on multiple Algorithm and put in database
-     * @Return void
-     * @param healthDetails
+     * This method is responsible for sending health data to the SleepRecommendationService, ExerciseRecommendationService, and DietService
+     * for data processing. It calculates recommendations based on multiple algorithms and stores the results in the database.
+     *
+     * @param healthDetails An object containing health-related information to be processed.
+     * @return void
      */
     public void importHealthDetails(HealthDetails healthDetails){
+        // Calculate exercise recommendations based on healthDetails
         exerciseRecommendationService.exerciseRecommendation(healthDetails);
+
+        // Calculate sleep recommendations based on healthDetails
         sleepService.sleepRecommendation(healthDetails);
+
+        // Calculate diet recommendations based on healthDetails
         dietService.dietRecommendation(healthDetails);
     }
+
 }
