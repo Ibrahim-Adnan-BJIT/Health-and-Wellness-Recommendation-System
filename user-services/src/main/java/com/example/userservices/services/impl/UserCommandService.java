@@ -10,6 +10,7 @@ import com.example.userservices.services.IUserCommandService;
 import com.example.userservices.utils.Constants;
 import com.example.userservices.utils.EnumValidation;
 import com.example.userservices.webclient.IMentalHealthServiceClient;
+import com.example.userservices.webclient.INutritionServiceClient;
 import com.example.userservices.webclient.IProgressServiceClient;
 import com.example.userservices.webclient.IRecommendationServiceClient;
 import lombok.extern.slf4j.Slf4j;
@@ -28,14 +29,16 @@ public class UserCommandService implements IUserCommandService {
     private final IRecommendationServiceClient recommendationServiceClient;
     private final IProgressServiceClient progressServiceClient;
     private final IMentalHealthServiceClient mentalHealthServiceClient;
+    private final INutritionServiceClient nutritionServiceClient;
 
-    public UserCommandService(UserRepository userRepository, HealthRepository healthRepository, RecommendationsClient recommendationsClient, IRecommendationServiceClient recommendationServiceClient, IProgressServiceClient progressServiceClient, IMentalHealthServiceClient mentalHealthServiceClient) {
+    public UserCommandService(UserRepository userRepository, HealthRepository healthRepository, RecommendationsClient recommendationsClient, IRecommendationServiceClient recommendationServiceClient, IProgressServiceClient progressServiceClient, IMentalHealthServiceClient mentalHealthServiceClient, INutritionServiceClient nutritionServiceClient) {
         this.userRepository = userRepository;
         this.healthRepository = healthRepository;
         this.recommendationsClient = recommendationsClient;
         this.recommendationServiceClient = recommendationServiceClient;
         this.progressServiceClient = progressServiceClient;
         this.mentalHealthServiceClient = mentalHealthServiceClient;
+        this.nutritionServiceClient = nutritionServiceClient;
     }
 
     // Create User Profile and Health Details
@@ -79,6 +82,7 @@ public class UserCommandService implements IUserCommandService {
         sendToRecommendationMicroservice(healthDetails);
         sendToProgressMicroservice(healthDetails);
         sendToMentalHealthMicroservice(healthDetails);
+        sendToNutritionMicroservice(healthDetails);
     }
 
     // Update Health Information
@@ -106,6 +110,7 @@ public class UserCommandService implements IUserCommandService {
         sendToRecommendationMicroservice(healthDetails);
         sendToProgressMicroservice(healthDetails);
         sendToMentalHealthMicroservice(healthDetails);
+        sendToNutritionMicroservice(healthDetails);
     }
 
     // Send data to Recommendation Microservices
@@ -135,6 +140,15 @@ public class UserCommandService implements IUserCommandService {
                 );
     }
 
+    // Send data to Nutrition Microservices
+    private void sendToNutritionMicroservice(HealthDetails healthDetails) {
+        nutritionServiceClient.addRecommendation(healthDetails)
+                .subscribe(
+                        response -> log.info("Data received successfully by Nutrition Microservice"),
+                        ex -> log.error("Failed to import to Nutrition Microservice: " + ex.getMessage())
+                );
+    }
+
 
     // Map DTO to entity in User Profile
     private UserProfile createAndSaveUserProfile(long userId, UserRequestDTO userRequestDTO) {
@@ -157,6 +171,7 @@ public class UserCommandService implements IUserCommandService {
         return healthDetails;
     }
 
+    // Set Health Details from User Details DTO
     private void setHealthDetailsFields(HealthDetails healthDetails, UserRequestDTO userRequestDTO) {
         Map<String, Consumer<HealthDetails>> fieldSetters = Map.of(
                 "gender", gender -> healthDetails.setGender(EnumValidation.parseGender(userRequestDTO.getHealthDetails().getGender())),
@@ -204,6 +219,7 @@ public class UserCommandService implements IUserCommandService {
         fieldSetters.forEach((fieldName, setter) -> setter.accept(healthDetails));
     }
 
+    // Map DTO to Entity Daily Schedule
     private DailySchedule createDailySchedule(DailyScheduleDTO dailyScheduleDTO) {
         DailySchedule dailySchedule = new DailySchedule();
         return mapDataToDailySchedule(dailySchedule, dailyScheduleDTO);
