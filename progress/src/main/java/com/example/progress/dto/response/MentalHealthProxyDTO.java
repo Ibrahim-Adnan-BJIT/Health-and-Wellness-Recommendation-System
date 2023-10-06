@@ -14,9 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MentalHealthProxyDTO {
     private long age;
-
     private boolean depression;
     private boolean anxiety;
-
     private StressLevel stressLevel;
 }

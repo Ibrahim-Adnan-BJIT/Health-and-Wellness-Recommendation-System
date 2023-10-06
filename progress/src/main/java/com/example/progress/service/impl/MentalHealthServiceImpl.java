@@ -38,6 +38,7 @@ public class MentalHealthServiceImpl implements MentalHealthService {
         MentalHealth mentalHealth = healthDetails.getMentalHealth();
 
         mentalHealthProgress.setUserId(healthDetails.getUserId());
+        mentalHealthProgress.setAge(healthDetails.getAge());
         mentalHealthProgress.setDepression(mentalHealth.isDepression());
         mentalHealthProgress.setDate(LocalDate.now());
         mentalHealthProgress.setAnxiety(mentalHealth.isAnxiety());
@@ -63,13 +64,13 @@ public class MentalHealthServiceImpl implements MentalHealthService {
     @Override
     public MentalHealthProgressResponseDTO analysisMentalHealth(long userId) {
         int days = 7;
-        
+
         LocalDate today = LocalDate.now();
         LocalDate startDate = today.minusDays(days);
-        
-        List<MentalHealthProgress> mentalHealthProgressList = 
-        		mentalHealthProgressRepository.
-        		findLast7DaysByUserId(userId, startDate, today);
+
+        List<MentalHealthProgress> mentalHealthProgressList =
+                mentalHealthProgressRepository.
+                        findLast7DaysByUserId(userId, startDate, today);
 
         MentalHealthProgressResponseDTO mentalHealthProgressResponseDTO =
                 new MentalHealthProgressResponseDTO();
@@ -78,27 +79,27 @@ public class MentalHealthServiceImpl implements MentalHealthService {
 
         for (MentalHealthProgress progress : mentalHealthProgressList) {
 
-                if (progress.isDepression()) {
-                    mentalHealthTrack.depressionCount++;
-                }
-                if (progress.isAnxiety()) {
-                    mentalHealthTrack.anxietyCount++;
-                }
-                Mode mode = progress.getMode();
-                if (mode == Mode.SAD) {
-                    mentalHealthTrack.sadCount++;
-                } else if (mode == Mode.MANIC) {
-                    mentalHealthTrack.manicCount++;
-                }
+            if (progress.isDepression()) {
+                mentalHealthTrack.depressionCount++;
+            }
+            if (progress.isAnxiety()) {
+                mentalHealthTrack.anxietyCount++;
+            }
+            Mode mode = progress.getMode();
+            if (mode == Mode.SAD) {
+                mentalHealthTrack.sadCount++;
+            } else if (mode == Mode.MANIC) {
+                mentalHealthTrack.manicCount++;
+            }
 
-                StressLevel stressLevel = progress.getStressLevel();
-                LifeSatisfaction lifeSatisfaction = progress.getLifeSatisfaction();
-                if (stressLevel == StressLevel.MODERATE) {
-                    mentalHealthTrack.moderateStressCount++;
-                }
-                if (lifeSatisfaction == LifeSatisfaction.LOW) {
-                    mentalHealthTrack.lowSatisfactionCount++;
-                }
+            StressLevel stressLevel = progress.getStressLevel();
+            LifeSatisfaction lifeSatisfaction = progress.getLifeSatisfaction();
+            if (stressLevel == StressLevel.MODERATE) {
+                mentalHealthTrack.moderateStressCount++;
+            }
+            if (lifeSatisfaction == LifeSatisfaction.LOW) {
+                mentalHealthTrack.lowSatisfactionCount++;
+            }
         }
 
         StringBuilder messageBuilder = getStringBuilder(mentalHealthTrack);
@@ -116,7 +117,7 @@ public class MentalHealthServiceImpl implements MentalHealthService {
             if (mentalHealthTrack.depressionCount > 0 && mentalHealthTrack.anxietyCount > 0) {
                 messageBuilder.append("both depression and anxiety");
             }
-            String mentalState = (mentalHealthTrack.depressionCount > 0) ? "depression":"anxiety";
+            String mentalState = (mentalHealthTrack.depressionCount > 0) ? "depression" : "anxiety";
             messageBuilder.append(mentalState + ". ");
         } else {
             messageBuilder.append("you have not experienced depression or anxiety. ");

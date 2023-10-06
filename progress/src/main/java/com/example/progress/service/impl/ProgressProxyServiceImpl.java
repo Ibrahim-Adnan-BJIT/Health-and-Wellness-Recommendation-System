@@ -1,5 +1,10 @@
+/**
+ * Service for retrieving and processing
+ * health progress data for data analysis
+ */
 package com.example.progress.service.impl;
 
+import com.example.progress.dto.response.HealthProxyResponseDTO;
 import com.example.progress.dto.response.MentalHealthProgressResponseDTO;
 import com.example.progress.dto.response.MentalHealthProxyDTO;
 import com.example.progress.dto.response.PhysicalHealthProxyDTO;
@@ -12,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class ProgressProxyServiceImpl implements ProgressProxyService {
@@ -20,7 +24,15 @@ public class ProgressProxyServiceImpl implements ProgressProxyService {
     private final PhysicalHealthProgressRepository physicalHealthProgressRepository;
 
     @Override
-    public List<MentalHealthProxyDTO> getMentalHealthProgress() {
+    public HealthProxyResponseDTO getDataForDataAnalysis() {
+        return HealthProxyResponseDTO
+                .builder()
+                .mentalHealthProxyDTOS(getMentalHealthProgress())
+                .physicalHealthProxyDTOS(getPhysicalHealthProgress())
+                .build();
+    }
+
+    private List<MentalHealthProxyDTO> getMentalHealthProgress() {
         List<MentalHealthProgress> mentalHealthProgress = mentalHealthProgressRepository.findAll();
         return mentalHealthProgress.stream()
                 .map(this::mapTOMentalDTO).toList();
@@ -35,8 +47,7 @@ public class ProgressProxyServiceImpl implements ProgressProxyService {
                 .build();
     }
 
-    @Override
-    public List<PhysicalHealthProxyDTO> getPhysicalHealthProgress() {
+    private List<PhysicalHealthProxyDTO> getPhysicalHealthProgress() {
         List<PhysicalHealthProgress> physicalHealthProgresses = physicalHealthProgressRepository.findAll();
         return physicalHealthProgresses.stream()
                 .map(this::mapTOPhysicalDTO).toList();
@@ -50,4 +61,5 @@ public class ProgressProxyServiceImpl implements ProgressProxyService {
                 .sleepIssue(physicalHealthProgress.getSleepIssue())
                 .build();
     }
+
 }
