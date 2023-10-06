@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ResponseDTO {
     private String text;
-    private double teenagePercentage;
+    private double percentage;
 }
