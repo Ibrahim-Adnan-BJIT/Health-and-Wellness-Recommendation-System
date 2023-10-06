@@ -19,7 +19,7 @@ public class UserProxyController {
         this.healthDetailsService = healthDetailsService;
     }
 
-
+    // Internal Api for push data when any user create profile or update profile in User Microservice
     @PostMapping("/health-data")
     public Mono<ProxyResponse> importUserHealthData(@RequestBody HealthDetails healthDetails) {
 

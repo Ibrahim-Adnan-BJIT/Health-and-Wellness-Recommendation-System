@@ -40,12 +40,12 @@ public class UserQueryService implements IUserQueryService {
 
         // Fetch user profile information
         UserProfile userProfile = userRepository.findByUserId(userId);
-        // Fetch data from Auth service
+        // Fetch User email and name from Auth service
         UserInformation userInformation;
         try {
             userInformation = securityServiceClient.getUserInformation(userId);
         } catch (FeignCustomException ex) {
-
+            log.error("Failed to get user information");
             throw new AuthenticationException(ex.getStatusCode(), ex.getErrorDetails().getMessage());
         }
 
@@ -62,6 +62,7 @@ public class UserQueryService implements IUserQueryService {
         return buildHealthDetailsDTO(healthDetails);
     }
 
+    // Map HealthDetails entity to DTO
     private HealthDetailsDto buildHealthDetailsDTO(HealthDetails healthDetails) {
         return HealthDetailsDto.builder()
                 .userId(healthDetails.getUserId())
@@ -80,7 +81,7 @@ public class UserQueryService implements IUserQueryService {
                 .build();
     }
 
-    // Define methods to convert nested entities to DTOs (same as before)
+    // Define methods to convert nested entities to DTOs
     private DailyScheduleDTO convertToDailyScheduleDTO(DailySchedule dailySchedule) {
         return (dailySchedule != null) ? DailyScheduleDTO.builder()
                 .wakeTime(dailySchedule.getWakeTime())
@@ -88,6 +89,7 @@ public class UserQueryService implements IUserQueryService {
                 .build() : null;
     }
 
+    // Map MentalHealth entity to DTO
     private MentalHealthDTO convertToMentalHealthDTO(MentalHealth mentalHealth) {
         return (mentalHealth != null) ? MentalHealthDTO.builder()
                 .depression(mentalHealth.isDepression())
@@ -101,6 +103,7 @@ public class UserQueryService implements IUserQueryService {
                 .build() : null;
     }
 
+    // Map PhysicalHealth entity to DTO
     private PhysicalHealthDTO convertToPhysicalHealthDTO(PhysicalHealth physicalHealth) {
         return (physicalHealth != null) ? PhysicalHealthDTO.builder()
                 .smoke(physicalHealth.isSmoke())
@@ -114,7 +117,7 @@ public class UserQueryService implements IUserQueryService {
     }
 
 
-    // Convert Model to DTO
+    // Convert User Profile Model to DTO
     private UserProfileResponseDTO mapToDto(UserProfile userProfile,
                                             UserInformation userInformation,
                                             HealthDetails healthDetails) {
