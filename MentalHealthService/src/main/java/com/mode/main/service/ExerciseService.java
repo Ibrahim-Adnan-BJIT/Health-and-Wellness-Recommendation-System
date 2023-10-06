@@ -15,6 +15,7 @@ public class ExerciseService {
     @Autowired
     private final ExerciseRepository exerciseRepository;
 
+
     public ExerciseService(ExerciseRepository exerciseRepository) {
         this.exerciseRepository = exerciseRepository;
     }
@@ -22,18 +23,21 @@ public class ExerciseService {
     public ExerciseEntity exerciseRecommendation(HealthDetails mode) {
         ExerciseEntity exerciseEntity = new ExerciseEntity();
         MentalHealth mentalHealth = new MentalHealth();
+        long userId = mode.getUserId();
+//
+
         mentalHealth = mode.getMentalHealth();
         if (mentalHealth.isDepression() && mentalHealth.isAnxiety()
                 && !mentalHealth.isPanicDisorder() && !mentalHealth.isSchizophrenia()) {
 
-            Optional<ExerciseEntity> find = exerciseRepository.findByUserId(mode.getUserId());
+            Optional<ExerciseEntity> find = exerciseRepository.findByUserId(userId);
             if (find.isPresent()) {
                 exerciseEntity = find.get();
                 exerciseEntity.setExerciseName("Meditation, Yoga");
                 exerciseEntity.setDuration("20, 30 Minutes");
                 exerciseEntity.setTotalDay("30 Days");
             } else {
-                exerciseEntity.setUserId(mode.getUserId());
+                exerciseEntity.setUserId(userId);
                 exerciseEntity.setExerciseName("Meditation, Yoga");
                 exerciseEntity.setDuration("20, 30 Minutes");
                 exerciseEntity.setTotalDay("30 Days");
@@ -42,62 +46,62 @@ public class ExerciseService {
         } else if (!mentalHealth.isDepression() && !mentalHealth.isAnxiety()
                 && !mentalHealth.isPanicDisorder() && !mentalHealth.isSchizophrenia()) {
 
-            Optional<ExerciseEntity> find = exerciseRepository.findByUserId(mode.getUserId());
+            Optional<ExerciseEntity> find = exerciseRepository.findByUserId(userId);
             if (find.isPresent()) {
                 exerciseEntity = find.get();
                 exerciseEntity.setExerciseName("You are fit. Just do regular exercise");
                 exerciseEntity.setDuration("30 Minutes");
                 exerciseEntity.setTotalDay("Continue");
             } else {
-                exerciseEntity.setUserId(mode.getUserId());
+                exerciseEntity.setUserId(userId);
                 exerciseEntity.setExerciseName("Just do regular exercise");
                 exerciseEntity.setDuration("30 Minutes");
                 exerciseEntity.setTotalDay("Continue");
             }
 
-        }else if (mentalHealth.isDepression() && !mentalHealth.isAnxiety()
+        } else if (mentalHealth.isDepression() && !mentalHealth.isAnxiety()
                 && !mentalHealth.isPanicDisorder() && !mentalHealth.isSchizophrenia()) {
 
-            Optional<ExerciseEntity> find = exerciseRepository.findByUserId(mode.getUserId());
+            Optional<ExerciseEntity> find = exerciseRepository.findByUserId(userId);
             if (find.isPresent()) {
                 exerciseEntity = find.get();
                 exerciseEntity.setExerciseName("Aerobic exercise: running, swimming, biking, walking, dancing, and hiking");
                 exerciseEntity.setDuration("20 Minutes");
                 exerciseEntity.setTotalDay("Continue");
             } else {
-                exerciseEntity.setUserId(mode.getUserId());
+                exerciseEntity.setUserId(userId);
                 exerciseEntity.setExerciseName("running, swimming, biking, walking, dancing, and hiking");
                 exerciseEntity.setDuration("20 Minutes");
                 exerciseEntity.setTotalDay("Continue");
             }
 
-        }else if (mentalHealth.isDepression() && mentalHealth.isAnxiety()
+        } else if (mentalHealth.isDepression() && mentalHealth.isAnxiety()
                 && !mentalHealth.isPanicDisorder() && mentalHealth.isSchizophrenia()) {
 
-            Optional<ExerciseEntity> find = exerciseRepository.findByUserId(mode.getUserId());
+            Optional<ExerciseEntity> find = exerciseRepository.findByUserId(userId);
             if (find.isPresent()) {
                 exerciseEntity = find.get();
                 exerciseEntity.setExerciseName("Aerobic exercise: running, swimming, biking, walking, dancing, and hiking");
                 exerciseEntity.setDuration("20 Minutes");
                 exerciseEntity.setTotalDay("Continue");
             } else {
-                exerciseEntity.setUserId(mode.getUserId());
+                exerciseEntity.setUserId(userId);
                 exerciseEntity.setExerciseName("running, swimming, biking, walking, dancing, and hiking");
                 exerciseEntity.setDuration("20 Minutes");
                 exerciseEntity.setTotalDay("Continue");
             }
 
-        }else if (mentalHealth.isDepression() && mentalHealth.isAnxiety()
+        } else if (mentalHealth.isDepression() && mentalHealth.isAnxiety()
                 && mentalHealth.isPanicDisorder() && mentalHealth.isSchizophrenia()) {
 
-            Optional<ExerciseEntity> find = exerciseRepository.findByUserId(mode.getUserId());
+            Optional<ExerciseEntity> find = exerciseRepository.findByUserId(userId);
             if (find.isPresent()) {
                 exerciseEntity = find.get();
                 exerciseEntity.setExerciseName("Please you have to consultant with a doctor. Because you have serious health conditions");
                 exerciseEntity.setDuration("Doctors recommendation");
                 exerciseEntity.setTotalDay("Doctors recommendation");
             } else {
-                exerciseEntity.setUserId(mode.getUserId());
+                exerciseEntity.setUserId(userId);
                 exerciseEntity.setExerciseName("Please you have to consultant with a doctor.");
                 exerciseEntity.setDuration("Doctors recommendation");
                 exerciseEntity.setTotalDay("Doctors recommendation");

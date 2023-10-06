@@ -29,6 +29,10 @@ public class FoodNutritionServiceImpl implements FoodNutritionService {
         Food food = getFood(foodId);
         Nutrition nutrition = getNutrition(nutritionId);
 
+        if (foodNutritionRepository.existsByFood_IdAndNutrition_Id(foodId, nutritionId)) {
+            throw new CustomException(new Date(), "food nutrition already exists", HttpStatus.BAD_REQUEST);
+        }
+
         FoodNutrition foodNutrition = FoodNutrition
                 .builder()
                 .quantity(foodNutritionDto.getQuantity())
