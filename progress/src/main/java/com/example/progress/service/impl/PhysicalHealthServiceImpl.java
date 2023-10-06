@@ -36,6 +36,7 @@ public class PhysicalHealthServiceImpl implements PhysicalHealthService {
         PhysicalHealth physicalHealth = healthDetails.getPhysicalHealth();
 
         physicalHealthProgress.setUserId(healthDetails.getUserId());
+        physicalHealthProgress.setAge(healthDetails.getAge());
         physicalHealthProgress.setSmoke(physicalHealth.isSmoke());
         physicalHealthProgress.setDiabetesLevel(physicalHealth.getDiabetesLevel());
         physicalHealthProgress.setBloodPressure(physicalHealth.getBloodPressure());
