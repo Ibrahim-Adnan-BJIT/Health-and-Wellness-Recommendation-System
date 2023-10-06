@@ -21,6 +21,8 @@ public class PhysicalHealthProgress {
 
     private long userId;
 
+    private long age;
+
     private boolean smoke;
 
     @Enumerated(EnumType.STRING)
