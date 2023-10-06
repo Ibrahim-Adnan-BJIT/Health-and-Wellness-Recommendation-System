@@ -1,5 +1,6 @@
 package com.feedback.main.service;
 
+import com.feedback.main.dietResponse.DietFeedbackDecisionResponse;
 import com.feedback.main.exception.CustomException;
 import com.feedback.main.model.AllFeedbackResponseDTO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,82 +15,94 @@ public class DataDrivenDecisionService {
     @Autowired
     private RestTemplate restTemplate;
 
-    public String dietFeedbackDecisions() {
+    public DietFeedbackDecisionResponse dietFeedbackDecisions() {
         String remoteEndpoint = "http://localhost:8081/api/v2/feedback/diet/get";
         AllFeedbackResponseDTO[] feedbackDtos = restTemplate.getForObject(remoteEndpoint, AllFeedbackResponseDTO[].class);
 
         if (feedbackDtos != null && feedbackDtos.length > 0) {
             double averageRating = calculateAverageRating(Arrays.asList(feedbackDtos));
 
+            String feedbackMessage;
             if (averageRating >= 7.0) {
-                return "Great feedback! Keep up the good work.";
+                feedbackMessage = "Great feedback! We should keep up the good work.";
             } else if (averageRating >= 5) {
-                return "Good feedback. There is room for improvement.";
+                feedbackMessage = "Good feedback. But There is room for improvement.";
             } else {
-                return "Feedback indicates improvement is needed.";
+                feedbackMessage = "Feedback indicates improvement is needed.";
             }
+
+            return new DietFeedbackDecisionResponse(feedbackMessage, averageRating);
         } else {
             throw new CustomException("Here is no diet Feedback yet");
         }
     }
 
 
-    public String sleepFeedbackDecisions() {
+    public DietFeedbackDecisionResponse sleepFeedbackDecisions() {
         String remoteEndpoint = "http://localhost:8081/api/v2/feedback/sleep/get";
         AllFeedbackResponseDTO[] feedbackDtos = restTemplate.getForObject(remoteEndpoint, AllFeedbackResponseDTO[].class);
 
         if (feedbackDtos != null && feedbackDtos.length > 0) {
             double averageRating = calculateAverageRating(Arrays.asList(feedbackDtos));
 
+            String feedbackMessage;
             if (averageRating >= 7.0) {
-                return "Great feedback! Keep up the good work.";
+                feedbackMessage = "Great feedback! We should keep up the good work.";
             } else if (averageRating >= 5) {
-                return "Good feedback. There is room for improvement.";
+                feedbackMessage = "Good feedback. There is room for improvement.";
             } else {
-                return "Feedback indicates improvement is needed.";
+                feedbackMessage = "Feedback indicates improvement is needed.";
             }
+
+            return new DietFeedbackDecisionResponse(feedbackMessage, averageRating);
         } else {
-            throw new CustomException("Here is no diet Feedback yet");
+            throw new CustomException("Here is no sleep Feedback yet");
         }
     }
 
 
-    public String exerciseFeedbackDecisions() {
+    public DietFeedbackDecisionResponse exerciseFeedbackDecisions() {
         String remoteEndpoint = "http://localhost:8081/api/v2/feedback/exercise/get";
         AllFeedbackResponseDTO[] feedbackDtos = restTemplate.getForObject(remoteEndpoint, AllFeedbackResponseDTO[].class);
 
         if (feedbackDtos != null && feedbackDtos.length > 0) {
             double averageRating = calculateAverageRating(Arrays.asList(feedbackDtos));
 
+            String feedbackMessage;
             if (averageRating >= 7.0) {
-                return "Great feedback! Keep up the good work.";
+                feedbackMessage = "Great feedback! We should keep up the good work.";
             } else if (averageRating >= 5) {
-                return "Good feedback. There is room for improvement.";
+                feedbackMessage = "Good feedback. There is room for improvement.";
             } else {
-                return "Feedback indicates improvement is needed.";
+                feedbackMessage = "Feedback indicates improvement is needed.";
             }
+
+            return new DietFeedbackDecisionResponse(feedbackMessage, averageRating);
         } else {
-            throw new CustomException("Here is no diet Feedback yet");
+            throw new CustomException("Here is no sleep Feedback yet");
         }
     }
 
 
-    public String mentalHealthFeedbackDecisions() {
+    public DietFeedbackDecisionResponse mentalHealthFeedbackDecisions() {
         String remoteEndpoint = "http://localhost:8081/api/v2/feedback/mental-health/get";
         AllFeedbackResponseDTO[] feedbackDtos = restTemplate.getForObject(remoteEndpoint, AllFeedbackResponseDTO[].class);
 
         if (feedbackDtos != null && feedbackDtos.length > 0) {
             double averageRating = calculateAverageRating(Arrays.asList(feedbackDtos));
 
+            String feedbackMessage;
             if (averageRating >= 7.0) {
-                return "Great feedback! Keep up the good work.";
+                feedbackMessage = "Great feedback! We should keep up the good work.";
             } else if (averageRating >= 5) {
-                return "Good feedback. There is room for improvement.";
+                feedbackMessage = "Good feedback. There is room for improvement.";
             } else {
-                return "Feedback indicates improvement is needed.";
+                feedbackMessage = "Feedback indicates improvement is needed.";
             }
+
+            return new DietFeedbackDecisionResponse(feedbackMessage, averageRating);
         } else {
-            throw new CustomException("Here is no diet Feedback yet");
+            throw new CustomException("Here is no sleep Feedback yet");
         }
     }
 

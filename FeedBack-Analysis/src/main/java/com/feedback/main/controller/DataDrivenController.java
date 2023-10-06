@@ -1,5 +1,6 @@
 package com.feedback.main.controller;
 
+import com.feedback.main.dietResponse.DietFeedbackDecisionResponse;
 import com.feedback.main.service.DataDrivenDecisionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,26 +17,26 @@ public class DataDrivenController {
     private DataDrivenDecisionService dataDrivenDecisionService;
 
     @GetMapping("/diet")
-    public ResponseEntity<String> dietFeedbackDecisions() {
-        String allDiets = dataDrivenDecisionService.dietFeedbackDecisions();
-        return new  ResponseEntity<>(allDiets, HttpStatus.OK);
+    public ResponseEntity<DietFeedbackDecisionResponse> dietFeedbackDecisions() {
+        DietFeedbackDecisionResponse response = dataDrivenDecisionService.dietFeedbackDecisions();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/sleep")
-    public ResponseEntity<String> sleepFeedbackDecisions(){
-        String sleep = dataDrivenDecisionService.sleepFeedbackDecisions();
-        return  new ResponseEntity<>(sleep, HttpStatus.OK);
+    public ResponseEntity<DietFeedbackDecisionResponse> sleepFeedbackDecisions() {
+        DietFeedbackDecisionResponse response = dataDrivenDecisionService.sleepFeedbackDecisions();
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/exercise")
-    public ResponseEntity<String> exerciseFeedbackDecisions(){
-        String exercise = dataDrivenDecisionService.exerciseFeedbackDecisions();
+    public ResponseEntity<DietFeedbackDecisionResponse> exerciseFeedbackDecisions(){
+        DietFeedbackDecisionResponse exercise = dataDrivenDecisionService.exerciseFeedbackDecisions();
         return new ResponseEntity<>(exercise, HttpStatus.OK);
     }
 
     @GetMapping("/mental-health")
-    public ResponseEntity<String> mentalHealthFeedbackDecisions(){
-        String health = dataDrivenDecisionService.mentalHealthFeedbackDecisions();
+    public ResponseEntity<DietFeedbackDecisionResponse> mentalHealthFeedbackDecisions(){
+        DietFeedbackDecisionResponse health = dataDrivenDecisionService.mentalHealthFeedbackDecisions();
         return new ResponseEntity<>(health, HttpStatus.OK);
     }
 
