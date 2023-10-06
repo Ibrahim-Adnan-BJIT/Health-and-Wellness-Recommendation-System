@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /*import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;*/
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -63,8 +64,34 @@ public class GroupUserServiceImpl implements GroupUserService {
        {
            throw new GroupNotExists("Invalid Group Id");
        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String targetRole = "ROLE_USER";
+        long userId =  Long.parseLong(authentication.getName());
+        authentication.getAuthorities();
+        // L=authentication.getAuthorities();
+        List<GrantedAuthority> authorities = (List<GrantedAuthority>) authentication.getAuthorities();
+        boolean hasTargetRole = authorities.stream()
+                .anyMatch(authority -> authority.getAuthority().equals(targetRole));
+        if (hasTargetRole) {
+            GroupUser groupUser=groupUserRepo.findByUserIdAndGroupId(userId,id);
+            if(groupUser==null)
+            {
+                throw new GroupNotExists("User is not in that group so please Join ...");
+            }
+        }
 
         return groupUsers.stream().map((todo) -> modelMapper.map(todo, GroupAndUserDto.class))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public List<GroupAndUserDto> getAllGroupWithUserId() {
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        long id =  Long.parseLong(authentication.getName());
+        List<GroupUser>groupUsers=groupUserRepo.findByUserId(id);
+        return  groupUsers.stream().map((todo) -> modelMapper.map(todo, GroupAndUserDto.class))
+                .collect(Collectors.toList());
+    }
+
 }

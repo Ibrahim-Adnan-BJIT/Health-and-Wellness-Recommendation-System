@@ -14,5 +14,7 @@ public interface GroupService {
 
     List<PostDto> getPostsForGroupId(Long id) throws GroupNotExists;
 
+    void deleteGroup(Long id)throws GroupNotExists,Exception;
+
 
 }

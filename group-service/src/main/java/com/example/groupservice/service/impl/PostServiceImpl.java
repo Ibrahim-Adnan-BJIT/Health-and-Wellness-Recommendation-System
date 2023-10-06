@@ -7,6 +7,7 @@ import com.example.groupservice.entity.GroupUser;
 import com.example.groupservice.entity.Grouping;
 import com.example.groupservice.entity.Interaction;
 import com.example.groupservice.entity.Posting;
+import com.example.groupservice.exception.CommentNull;
 import com.example.groupservice.exception.GroupNotExists;
 import com.example.groupservice.exception.PostIdNotExists;
 import com.example.groupservice.repository.GroupRepo;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 /*import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;*/
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -49,7 +51,7 @@ public class PostServiceImpl implements PostService {
         Optional<GroupUser> groupUser= Optional.ofNullable(groupUserRepo.findByUserIdAndGroupId(id, grouping.get().getId()));
         if(groupUser.isEmpty())
         {
-            throw new GroupNotExists("This user didnt joined this group before so Please Join before commenting");
+            throw new GroupNotExists("This user didnt joined this group before so Please Join before Posting something");
         }
         if(posting.getPostDescription()==null)
         {
@@ -68,14 +70,33 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<InteractionDto> getAllCommentsById(Long id) throws PostIdNotExists {
-        Optional<Posting> postings= Optional.ofNullable(postRepo.findById(id).orElseThrow(() ->
-                new PostIdNotExists("Invalid Post Id")));
 
-        List<Interaction>interactions=postings.get().getInteractions();
-      return interactions.stream().map((todo) -> modelMapper.map(todo, InteractionDto.class))
+
+    @Override
+    public List<PostDto> getAllPostsByUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        long id =  Long.parseLong(authentication.getName());
+        List<Posting>postings=postRepo.findByUserId(id);
+       return postings.stream().map((todo) -> modelMapper.map(todo, PostDto.class))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deletePost(Long id)throws PostIdNotExists,Exception {
+        Posting posting=postRepo.findById(id).orElseThrow(()->
+                new PostIdNotExists("Invalid Post Id"));
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String targetRole = "ROLE_USER";
+        long userId =  Long.parseLong(authentication.getName());
+        List<GrantedAuthority> authorities = (List<GrantedAuthority>) authentication.getAuthorities();
+        boolean hasTargetRole = authorities.stream()
+                .anyMatch(authority -> authority.getAuthority().equals(targetRole));
+
+        if(posting.getUserId()!=userId && hasTargetRole)
+        {
+            throw new Exception("You cant delete someones Comment");
+        }
+        postRepo.deleteById(id);
     }
 
 }

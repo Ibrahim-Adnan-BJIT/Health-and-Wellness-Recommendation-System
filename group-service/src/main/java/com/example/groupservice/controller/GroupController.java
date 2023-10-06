@@ -67,4 +67,18 @@ public class GroupController {
         return new ResponseEntity<>(userDtos,HttpStatus.FOUND);
     }
 
+    @GetMapping("/getAllGroupByUserId")
+    public ResponseEntity<List<GroupAndUserDto>> getAllGroupByUserId()
+    {
+        List<GroupAndUserDto> groupAndUserDtos=groupUserService.getAllGroupWithUserId();
+        return new ResponseEntity<>(groupAndUserDtos,HttpStatus.FOUND);
+    }
+
+    @DeleteMapping("/deleteGroup/{id}")
+    public ResponseEntity<String> deleteGroup(@PathVariable Long id) throws Exception
+    {
+        groupService.deleteGroup(id);
+        return new ResponseEntity<>("Group Deleted SuccessFully",HttpStatus.GONE);
+    }
+
 }

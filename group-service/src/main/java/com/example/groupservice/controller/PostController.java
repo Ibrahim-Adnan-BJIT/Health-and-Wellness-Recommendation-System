@@ -30,10 +30,23 @@ public class PostController {
         List<PostDto>postDtos=postService.getAllPosts();
         return new ResponseEntity<>(postDtos,HttpStatus.FOUND);
     }
-    @GetMapping("/getAllInteraction/{id}")
+  /*  @GetMapping("/getAllInteraction/{id}")
     public ResponseEntity<List<InteractionDto>> getAllInteraction(@PathVariable Long id)
     {
         List<InteractionDto>interactionDtos=postService.getAllCommentsById(id);
         return new ResponseEntity<>(interactionDtos,HttpStatus.ACCEPTED);
+    }*/
+    @GetMapping("/getAllPostsByUserId")
+    public ResponseEntity<List<PostDto>> getAllPostsByUserId()
+    {
+        List<PostDto>postDtos=postService.getAllPostsByUserId();
+        return new ResponseEntity<>(postDtos,HttpStatus.FOUND);
     }
+
+    @DeleteMapping("/deletePost/{id}")
+    public ResponseEntity<String> deletePost(@PathVariable Long id) throws Exception {
+        postService.deletePost(id);
+        return new ResponseEntity<>("Post Deleted SuccessFully",HttpStatus.GONE);
+    }
+
 }

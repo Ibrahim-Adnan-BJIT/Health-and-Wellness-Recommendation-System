@@ -3,6 +3,7 @@ package com.example.groupservice.controller;
 import com.example.groupservice.dto.InteractionDto;
 import com.example.groupservice.entity.Interaction;
 import com.example.groupservice.service.InteractionService;
+import jakarta.ws.rs.Path;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +23,15 @@ public class InteractionController {
         InteractionDto interactionDto=interactionService.createInteraction(interaction);
         return new ResponseEntity<>(interactionDto, HttpStatus.CREATED);
     }
-    @GetMapping("/getAllInteraction")
-    public ResponseEntity<List<InteractionDto>> getAllInteraction()
+    @GetMapping("/getAllInteractionByPostId/{id}")
+    public ResponseEntity<List<InteractionDto>> getAllInteraction(@PathVariable Long id)
     {
-        List<InteractionDto>interactionDtos=interactionService.getAllInteraction();
+        List<InteractionDto>interactionDtos=interactionService.getAllInteraction(id);
         return new ResponseEntity<>(interactionDtos,HttpStatus.FOUND);
+    }
+    @DeleteMapping("/deleteInteraction/{id}")
+    public ResponseEntity<String> deleteInteraction(@PathVariable Long id) throws Exception {
+        interactionService.deleteInteraction(id);
+        return new ResponseEntity<>("Deleted SuccessFully",HttpStatus.GONE);
     }
 }

@@ -20,4 +20,5 @@ public interface GroupUserRepo extends JpaRepository<GroupUser, Long> {
     GroupUser findByUserIdAndGroupId(long userId,long groupId);
 
     List<GroupUser> findByGroupId(Long id);
+    List<GroupUser>findByUserId(Long id);
 }

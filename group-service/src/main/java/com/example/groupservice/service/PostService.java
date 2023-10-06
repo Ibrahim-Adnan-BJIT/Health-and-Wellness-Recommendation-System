@@ -14,5 +14,7 @@ public interface PostService {
     PostDto createPost(Posting posting)throws GroupNotExists, PostIdNotExists;
     List<PostDto> getAllPosts();
 
-    List<InteractionDto> getAllCommentsById(Long id) throws PostIdNotExists;
+   // List<InteractionDto> getAllCommentsById(Long id) throws PostIdNotExists;
+    List<PostDto>getAllPostsByUserId();
+    void deletePost(Long id) throws PostIdNotExists,Exception;
 }

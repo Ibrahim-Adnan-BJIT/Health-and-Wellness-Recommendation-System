@@ -11,4 +11,6 @@ public interface GroupUserService {
     GroupAndUserDto joinGroup(GroupUser groupUser)throws GroupNotExists;
     List<GroupAndUserDto> getUsers();
     List<GroupAndUserDto> getAllUserWithGroupId(Long id) throws  GroupNotExists;
+
+    List<GroupAndUserDto>getAllGroupWithUserId();
 }
