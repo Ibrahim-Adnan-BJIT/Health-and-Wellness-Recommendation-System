@@ -10,13 +10,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PhysicalHealthHistoryDTO {
+public class PhysicalHealthProxyDTO {
     private long age;
     private boolean smoke;
-    private DiabetesLevel diabetesLevel;
     private BloodPressure bloodPressure;
-    private MotivationLevel motivationLevel;
-    private AlcoholConsumption alcoholConsumption;
-    private CaffeineConsumption caffeineConsumption;
     private SleepIssue sleepIssue;
 }

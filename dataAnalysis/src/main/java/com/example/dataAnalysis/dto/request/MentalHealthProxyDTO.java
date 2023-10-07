@@ -12,17 +12,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MentalHistoryDTO {
+public class MentalHealthProxyDTO {
     private long age;
     private boolean depression;
     private boolean anxiety;
-    private boolean panicDisorder;
-    private boolean bipolarDisorder;
-    private boolean schizophrenia;
-
-    private Mode mode;
-
     private StressLevel stressLevel;
-
-    private LifeSatisfaction lifeSatisfaction;
 }
