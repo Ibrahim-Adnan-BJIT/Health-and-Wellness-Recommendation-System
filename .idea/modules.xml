@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/YSD_B03_J2EE_MidTerm_StackOverflow.iml" filepath="$PROJECT_DIR$/.idea/YSD_B03_J2EE_MidTerm_StackOverflow.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/group-service.main.iml" filepath="$PROJECT_DIR$/.idea/modules/group-service.main.iml" />
-    </modules>
-  </component>
-</project>
