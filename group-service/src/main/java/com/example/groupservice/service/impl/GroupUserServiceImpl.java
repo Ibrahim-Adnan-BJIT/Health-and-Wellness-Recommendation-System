@@ -33,11 +33,16 @@ public class GroupUserServiceImpl implements GroupUserService {
     @Autowired
     private GroupRepo groupRepo;
 
+
+
     @Override
     public GroupAndUserDto joinGroup(GroupUser groupUser)throws GroupNotExists {
 
         if(groupUser.getGroupId()==null)
             throw new GroupNotExists("Group id cant be null");
+        Optional<Grouping> grouping=groupRepo.findById(groupUser.getGroupId());
+        if(grouping.isEmpty())
+            throw new GroupNotExists("Invalid GroupId");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         long id =  Long.parseLong(authentication.getName());
         groupUser.setUserId(id);
