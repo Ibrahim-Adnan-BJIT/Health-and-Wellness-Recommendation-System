@@ -24,6 +24,7 @@ public class AuthenticationService implements IAuthenticationService {
         this.securityServiceClient = securityServiceClient;
     }
 
+    // For Register
     @Override
     public AuthenticationResponseDTO register(RegisterRequestDTO request) {
 
@@ -38,6 +39,7 @@ public class AuthenticationService implements IAuthenticationService {
         return register;
     }
 
+    // For Log in
     @Override
     public LogInResponseDTO authenticate(LogInRequestDTO request) {
         LogInResponseDTO response;
@@ -51,6 +53,7 @@ public class AuthenticationService implements IAuthenticationService {
         return response;
     }
 
+    // Get userId from Principal
     public long getAuthenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
