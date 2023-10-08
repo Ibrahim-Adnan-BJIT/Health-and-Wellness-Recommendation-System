@@ -23,7 +23,6 @@ public class Nutrition {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    private boolean isDeleted = false;
 
     @Column(name = "calories(g)")
     private Double calories;

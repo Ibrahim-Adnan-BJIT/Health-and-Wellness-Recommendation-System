@@ -54,7 +54,7 @@ public class FoodServiceImpl implements FoodService {
                 .builder()
                 .name(foodNutrition.getNutrition().getName())
                 .calories(foodNutrition.getNutrition().getCalories())
-                .quantityOfCalories(foodNutrition.getQuantity())
+                .quantityOfNutritions(foodNutrition.getQuantity())
                 .build();
     }
 

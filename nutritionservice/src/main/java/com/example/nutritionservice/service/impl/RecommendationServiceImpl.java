@@ -204,7 +204,7 @@ public class RecommendationServiceImpl implements RecommendationService {
                 .builder()
                 .name(foodNutrition.getNutrition().getName())
                 .calories(foodNutrition.getNutrition().getCalories())
-                .quantityOfCalories(foodNutrition.getQuantity())
+                .quantityOfNutritions(foodNutrition.getQuantity())
                 .build();
     }
 

@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class NutritionResponseDTO {
     private String name;
     private Double calories;
-    private Double quantityOfCalories;
+    private Double quantityOfNutritions;
 }

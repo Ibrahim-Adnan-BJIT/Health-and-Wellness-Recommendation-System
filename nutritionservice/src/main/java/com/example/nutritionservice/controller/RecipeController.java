@@ -1,15 +1,14 @@
 package com.example.nutritionservice.controller;
 
 import com.example.nutritionservice.dto.request.RecipeRequestDTO;
+import com.example.nutritionservice.dto.request.RecipeUpdateDTO;
 import com.example.nutritionservice.response.ResponseHandler;
 import com.example.nutritionservice.service.RecipeService;
+import jakarta.ws.rs.Path;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -23,5 +22,12 @@ public class RecipeController {
     public ResponseEntity<?> addRecipe(@RequestBody RecipeRequestDTO recipeDto) {
         recipeService.addRecipe(recipeDto);
         return ResponseHandler.generateResponse(new Date(), "Food recipe added", HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{recipeId}/update")
+    public ResponseEntity<?> updateRecipe(@PathVariable long recipeId,
+                                          @RequestBody RecipeUpdateDTO recipeUpdateDTO) {
+        recipeService.updateRecipe(recipeId, recipeUpdateDTO);
+        return ResponseHandler.generateResponse(new Date(), "Food recipe updated", HttpStatus.OK);
     }
 }
