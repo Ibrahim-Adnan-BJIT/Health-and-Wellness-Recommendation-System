@@ -1,6 +1,5 @@
 package com.example.nutritionservice.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,7 +21,6 @@ public class Food {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    private boolean isDeleted = false;
 
     @OneToMany(mappedBy = "food")
     private List<FoodNutrition> foodNutritionSet = new ArrayList<>();

@@ -19,7 +19,7 @@ public class NutritionServiceImpl implements NutritionService {
     @Override
     public void addNutrition(NutritionRequestDTO nutritionDto) {
         if (nutritionRepository.existsByName(nutritionDto.getName())) {
-            throw new CustomException(new Date(), "already exists", HttpStatus.BAD_REQUEST);
+            throw new CustomException(new Date(), "Nutrition already exists", HttpStatus.BAD_REQUEST);
         }
 
         double calories = (nutritionDto.getCalories() != null) ? nutritionDto.getCalories() : 0.0;

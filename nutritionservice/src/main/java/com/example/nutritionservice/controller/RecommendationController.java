@@ -1,8 +1,6 @@
 package com.example.nutritionservice.controller;
 
-import com.example.nutritionservice.dto.response.ProxyResponse;
 import com.example.nutritionservice.dto.response.RecommendationDto;
-import com.example.nutritionservice.external.HealthDetails;
 import com.example.nutritionservice.response.ResponseHandler;
 import com.example.nutritionservice.service.AuthenticationService;
 import com.example.nutritionservice.service.RecommendationService;
@@ -28,8 +26,5 @@ public class RecommendationController {
         return ResponseHandler.generateResponse(new Date(), "Dietary Recommendation",
                 HttpStatus.OK, recommendationDto);
     }
-
-
-    //fetch user health detail in case recommendation missing
 
 }

@@ -9,16 +9,16 @@ import com.example.progress.exception.AuthenticationException;
 import com.example.progress.service.AuthenticationService;
 
 @Service
-public class AuthenticationServiceImpl implements AuthenticationService{
+public class AuthenticationServiceImpl implements AuthenticationService {
 
-	@Override
-	public long getAuthenticatedUser() {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    @Override
+    public long getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
             return Long.parseLong(authentication.getName());
         } else {
             throw new AuthenticationException(HttpStatus.UNAUTHORIZED, "User not authenticated");
         }
-	}
+    }
 
 }
